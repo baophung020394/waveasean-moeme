@@ -80,9 +80,9 @@ module.exports = {
       template: path.resolve(__dirname, "public", "index.html"),
       filename: "index.html",
     }),
-    new ESLintPlugin({
-      extensions: [".tsx", ".ts", ".js", ".jsx"],
-    }),
+    // new ESLintPlugin({
+    //   extensions: [".tsx", ".ts", ".js", ".jsx"],
+    // }),
   ],
 
   optimization: {
