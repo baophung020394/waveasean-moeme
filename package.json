@@ -1,7 +1,7 @@
 {
 	"scripts": {
 		"start": "webpack serve --config ./scripts/webpack.dev.js ",
-		"build": "webpack --config ./scripts/webpack.prod.js",
+		"build": "webpack --config ./scripts/webpack.dev.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d docs"
