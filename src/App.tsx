@@ -95,7 +95,7 @@ function MoeMe() {
           <AuthRoute path="/channel">
             <ChannelView />
           </AuthRoute>
-          <AuthRoute path="/channel-detail/:id">
+          <AuthRoute exact path="/channel-detail/:id">
             <ChannelView />
           </AuthRoute>
           <AuthRoute path="/profile">
@@ -104,7 +104,7 @@ function MoeMe() {
           <AuthRoute path="/settings">
             <SettingsView />
           </AuthRoute>
-          <Redirect path="/*" to="/login" />
+          <Redirect path="*" to="/login" />
         </Switch>
       </ContentWrapper>
     </Router>
