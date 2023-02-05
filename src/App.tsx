@@ -20,11 +20,11 @@ import styled from "styled-components";
 import Header from "./components/common/Header";
 import { listenToAuthChanges } from "actions/auth";
 import { checkUserConnection } from "actions/connection";
+import Test from "layouts/Test";
 
 function AuthRoute({ children, ...rest }: any) {
   const token = getAccessToken();
   const user = useSelector(({ auth }) => auth.user);
-  console.log("user route", user);
   const onlyChild = React.Children.only(children);
   return (
     <Route
@@ -60,16 +60,16 @@ function MoeMe() {
     };
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   let unsubFromUserConnection: any;
-  //   if (user?.uid) {
-  //     unsubFromUserConnection = dispatch(checkUserConnection(user.uid));
-  //   }
+  useEffect(() => {
+    let unsubFromUserConnection: any;
+    if (user?.uid) {
+      unsubFromUserConnection = dispatch(checkUserConnection(user.uid));
+    }
 
-  //   return () => {
-  //     unsubFromUserConnection && unsubFromUserConnection();
-  //   };
-  // }, [dispatch, user]);
+    return () => {
+      unsubFromUserConnection && unsubFromUserConnection();
+    };
+  }, [dispatch, user]);
 
   if (!isOnline) {
     return (
@@ -86,9 +86,13 @@ function MoeMe() {
       <Header />
       <ContentWrapper>
         <Switch>
-          <Route exact path="/">
+          {/* <Route exact path="/">
             <LoginView />
-            {/* <ChannelView /> */}
+            <Test />
+          </Route> */}
+          <Route path="/">
+            <Test />
+            <LoginView />
           </Route>
           <AuthRoute exact path="/home">
             <HomeView />

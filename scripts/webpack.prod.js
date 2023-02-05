@@ -8,14 +8,14 @@ const TerserPlugin = require("terser-webpack-plugin");
 module.exports = merge(config, {
   mode: "production",
   output: {
-    filename: "static/js/main.[contenthash:6].js", // Thêm mã hash tên file dựa vào content để tránh bị cache bởi CDN hay browser.
-    path: path.resolve(__dirname, "../dist"), // Build ra thư mục dist
-    publicPath: "/",
+    filename: "[name].[contenthash].bundle.js",
+    path: path.resolve(__dirname, "../dist")
   },
+
   plugins: [
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify("production"),
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
     }),
   ],
 
