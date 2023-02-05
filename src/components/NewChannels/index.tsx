@@ -93,6 +93,14 @@ const AvailableChatsStyled = styled.div`
 
     .available {
       min-width: 300px;
+      max-width: 25%;
+      flex: 1 1 auto;
+      margin-right: 16px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+      
     }
 
     .available--created {
@@ -110,7 +118,6 @@ const AvailableChatsStyled = styled.div`
         display: flex;
         flex-wrap: wrap;
         padding: 0;
-        justify-content: space-between;
       }
     }
 
@@ -129,7 +136,6 @@ const AvailableChatsStyled = styled.div`
         display: flex;
         flex-wrap: wrap;
         padding: 0;
-        justify-content: space-between;
       }
     }
   }
