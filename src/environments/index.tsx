@@ -1,14 +1,14 @@
-let config
-console.log(process.env)
-switch (process.env.NODE_ENV) {   
-  case 'production':
-    config = require('./production')
-    break
-  case 'development':
+let config;
+console.log("process.env", process.env);
+switch (process.env.NODE_ENV) {
+  case "production":
+    config = require("./production");
+    break;
+  case "development":
   default:
-    config = require('./development')
+    config = require("./development");
 }
 
-console.log(config)
+console.log("config", config);
 
-export default config
+export default config;
