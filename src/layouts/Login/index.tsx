@@ -32,7 +32,7 @@ function Login({}: LoginProps) {
   }
 
   return (
-    <LoginStyled>
+    <LoginStyled className="login-styled">
       <div className="login--box">
         <form onSubmit={handleSubmit(obSubmit)} className="login--box__form">
           <h1>Login</h1>
