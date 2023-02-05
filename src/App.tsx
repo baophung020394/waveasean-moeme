@@ -41,7 +41,7 @@ function AuthRoute({ children, ...rest }: any) {
 }
 
 const ContentWrapper = ({ children }: any) => (
-  <ContentWrapperCSS>{children}</ContentWrapperCSS>
+  <div className="content-page">{children}</div>
 );
 
 function MoeMe() {
