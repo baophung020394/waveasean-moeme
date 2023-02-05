@@ -9,7 +9,7 @@ module.exports = merge(config, {
   mode: "production",
   output: {
     filename: "[name].[contenthash].bundle.js",
-    path: path.resolve(__dirname, "../docs"),
+    path: path.resolve(__dirname, "./dist"),
   },
 
   plugins: [
