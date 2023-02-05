@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "CommonJS",
+    "target": "ES5",
+    "jsx": "react",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "baseUrl": "./src",
+    "paths": {
+      "environment": ["./environments/index.ts"],
+      "components/*": ["./components/*"],
+      "features/*": ["./features/*"],
+      "stores": ["./stores/index.ts"],
+      "models": ["./models/*"],
+      "layouts": ["./layouts/*"],
+      "actions": ["./actions/*"],
+      "reducers": ["./reducers/*"],
+      "api": ["./api/*"],
+      "store": ["./store/*"],
+      "utils": ["./utils/*"],
+      "constants": ["./constants/*"],
+      "services": ["./services/*"],
+      "hooks": ["./hooks/*"],
+      "assets": ["./assets/*"],
+      "mocks": ["./mocks/*"],
+      "db": ["./db/*"]
+    }
+  }
+}
