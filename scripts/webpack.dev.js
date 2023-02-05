@@ -8,7 +8,7 @@ module.exports = merge(config, {
 
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "../dist"),
+    path: path.resolve(__dirname, "../docs"),
     publicPath: "/",
   },
   plugins: [
@@ -21,7 +21,7 @@ module.exports = merge(config, {
   ],
   devServer: {
     historyApiFallback: true,
-    contentBase: path.join(__dirname, "dist"),
+    contentBase: path.join(__dirname, "docs"),
     compress: true,
     port: 3000,
     watchOptions: {
