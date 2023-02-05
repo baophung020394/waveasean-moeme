@@ -9,13 +9,12 @@ module.exports = merge(config, {
   mode: "production",
   output: {
     filename: "[name].[contenthash].bundle.js",
-    path: path.resolve(__dirname, "./dist"),
+    path: path.resolve(__dirname, "../dist"),
   },
-
   plugins: [
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      "process.env.NODE_ENV": JSON.stringify("production"),
     }),
   ],
 

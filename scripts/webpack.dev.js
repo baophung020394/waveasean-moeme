@@ -8,12 +8,12 @@ module.exports = merge(config, {
 
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "./dist"),
+    path: path.resolve(__dirname, "../dist"),
     publicPath: "/",
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+      "process.env.NODE_ENV": JSON.stringify("development"),
     }),
   ],
   devServer: {
