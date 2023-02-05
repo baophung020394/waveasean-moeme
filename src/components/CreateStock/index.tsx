@@ -35,15 +35,15 @@ function CreateStock({ closeFunc, submitForm }: CreateStockProps) {
           </div>
           <div className="form--inputs__input">
             <span>매수가</span>
-            <input {...register("priceBuy")} type="text" />
+            <input {...register("priceBuy")} type="number" />
           </div>
           <div className="form--inputs__input">
             <span>매도가</span>
-            <input {...register("priceSell")} type="text" />
+            <input {...register("priceSell")} type="number" />
           </div>
           <div className="form--inputs__input">
             <span>손절가</span>
-            <input {...register("priceCutoff")} type="text" />
+            <input {...register("priceCutoff")} type="number" />
           </div>
         </div>
 
