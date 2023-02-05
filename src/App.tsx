@@ -60,16 +60,16 @@ function MoeMe() {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    let unsubFromUserConnection: any;
-    if (user?.uid) {
-      unsubFromUserConnection = dispatch(checkUserConnection(user.uid));
-    }
+  // useEffect(() => {
+  //   let unsubFromUserConnection: any;
+  //   if (user?.uid) {
+  //     unsubFromUserConnection = dispatch(checkUserConnection(user.uid));
+  //   }
 
-    return () => {
-      unsubFromUserConnection && unsubFromUserConnection();
-    };
-  }, [dispatch, user]);
+  //   return () => {
+  //     unsubFromUserConnection && unsubFromUserConnection();
+  //   };
+  // }, [dispatch, user]);
 
   if (!isOnline) {
     return (
@@ -86,12 +86,7 @@ function MoeMe() {
       <Header />
       <ContentWrapper>
         <Switch>
-          {/* <Route exact path="/">
-            <LoginView />
-            <Test />
-          </Route> */}
           <Route path="/login">
-            <Test />
             <LoginView />
           </Route>
           <AuthRoute path="/home">
@@ -100,7 +95,7 @@ function MoeMe() {
           <AuthRoute path="/channel">
             <ChannelView />
           </AuthRoute>
-          <AuthRoute exact path="/channel-detail/:id">
+          <AuthRoute path="/channel-detail/:id">
             <ChannelView />
           </AuthRoute>
           <AuthRoute path="/profile">
@@ -109,7 +104,7 @@ function MoeMe() {
           <AuthRoute path="/settings">
             <SettingsView />
           </AuthRoute>
-          <Redirect path="*" to="/login" />
+          <Redirect path="/*" to="/login" />
         </Switch>
       </ContentWrapper>
     </Router>

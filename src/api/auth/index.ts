@@ -34,7 +34,7 @@ export const login = async ({ userId, userPassword }: Auth) => {
 
   const resLogin: any = await axiosClient.post(url, JSON.stringify(data));
   setUser(resLogin);
-  console.log({ resLogin });
+
   const dataFirebase = { ...resLogin };
   dataFirebase.email = `${data.params.userId}@gmail.com`;
   dataFirebase.password = `${data.params.userPassword}56`;
@@ -58,7 +58,7 @@ export const login = async ({ userId, userPassword }: Auth) => {
   const userProfileRegister: any = {
     userId: data.params.userId,
     uid: user.uid,
-    username: user.uid,
+    username: data.params.userId,
     email: dataFirebase.email,
     avatar: resLogin?.params.profile_image,
     atk: resLogin?.params.atk,
