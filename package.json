@@ -19,6 +19,7 @@
 		"bootstrap": "^4.5.2",
 		"dotenv-webpack": "^8.0.1",
 		"emoji-picker-react": "^4.4.7",
+		"eslint-webpack-plugin": "^4.0.0",
 		"firebase": "^7.19.1",
 		"html-to-image": "^1.11.11",
 		"html2canvas": "^1.4.1",

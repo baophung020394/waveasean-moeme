@@ -1,5 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   entry: {
@@ -80,9 +82,10 @@ module.exports = {
       template: path.resolve(__dirname, "public", "index.html"),
       filename: "index.html",
     }),
-    // new ESLintPlugin({
-    //   extensions: [".tsx", ".ts", ".js", ".jsx"],
-    // }),
+    new Dotenv(),
+    new ESLintPlugin({
+      extensions: [".tsx", ".ts", ".js", ".jsx"],
+    }),
   ],
 
   optimization: {
