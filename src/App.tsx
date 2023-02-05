@@ -109,6 +109,7 @@ function MoeMe() {
           <AuthRoute path="/settings">
             <SettingsView />
           </AuthRoute>
+          <Redirect path="*" to="/login" />
         </Switch>
       </ContentWrapper>
     </Router>
