@@ -33,7 +33,7 @@ function AuthRoute({ children, ...rest }: any) {
         user ? (
           React.cloneElement(onlyChild, { ...rest, ...props })
         ) : (
-          <Redirect to="/" />
+          <Redirect to="/login" />
         )
       }
     />
@@ -90,17 +90,17 @@ function MoeMe() {
             <LoginView />
             <Test />
           </Route> */}
-          <Route path="/">
+          <Route path="/login">
             <Test />
             <LoginView />
           </Route>
-          <AuthRoute exact path="/home">
+          <AuthRoute path="/home">
             <HomeView />
           </AuthRoute>
-          <AuthRoute exact path="/channel">
+          <AuthRoute path="/channel">
             <ChannelView />
           </AuthRoute>
-          <AuthRoute path="/channel/:id">
+          <AuthRoute exact path="/channel-detail/:id">
             <ChannelView />
           </AuthRoute>
           <AuthRoute path="/profile">

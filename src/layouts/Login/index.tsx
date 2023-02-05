@@ -75,8 +75,8 @@ function Login({}: LoginProps) {
         </form>
 
         <div className="forgot-options">
-          <Link to="/">userid searching</Link>
-          <Link to="/">PW searching</Link>
+          <Link to="/login">userid searching</Link>
+          <Link to="/login">PW searching</Link>
         </div>
 
         <div className="footer-copyright">

@@ -68,14 +68,14 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
     console.log({isGoChannel})
     switch (isGoChannel) {
       case "GO_CHANNEL":
-        return history.push(`/channel/${channel?.id}`);
+        return history.push(`/channel-detail/${channel?.id}`);
       case "CREATE_CHANNEL":
         return askForConfirmtionOldChannel(channel);
       case "JOIN_CHANNEL":
         return askForConfirmtionNewChannel(channel);
 
       default:
-        return history.push(`/channel/${channel?.id}`);
+        return history.push(`/channel-detail/${channel?.id}`);
     }
 
     // if (!onClick) {

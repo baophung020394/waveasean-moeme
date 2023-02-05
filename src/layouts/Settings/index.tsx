@@ -21,7 +21,7 @@ function Settings() {
         inputColor="primary"
         onClick={() => {
           dispatch(logout());
-          history.push("/");
+          history.push("/login");
         }}
       >
         Logout
