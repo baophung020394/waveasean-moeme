@@ -65,7 +65,7 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
   };
 
   const onChooseChannel = async (channel: any) => {
-    console.log({isGoChannel})
+    console.log({ isGoChannel });
     switch (isGoChannel) {
       case "GO_CHANNEL":
         return history.push(`/channel-detail/${channel?.id}`);
@@ -124,11 +124,19 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
               data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=7&serverfile=thumb_${channel.room_profile_image}`}
               type="image/png"
             >
-              <img
-                src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
-                alt="avatar"
-                className="icon40 avatar"
-              />
+              {channel?.device === "web" ? (
+                <img
+                  className="image-chat"
+                  src={JSON.parse(channel?.room_profile_image)}
+                  alt="Thumb"
+                />
+              ) : (
+                <img
+                  src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
+                  alt="avatar"
+                  className="icon40 avatar"
+                />
+              )}
             </object>
             <div className="infor">
               <h3>{channel?.room_name}</h3>
@@ -160,7 +168,7 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
             </span>
           </div>
           <div className="card--bottom__buyer">
-            <p className="card--bottom__buyer--name">{channel?.ownerId} 1</p>
+            <p className="card--bottom__buyer--name">{channel?.enableWriteMsg} - </p>
             <span className="card--bottom__buyer--quantity">
               {currencyFormat(Number(channel?.userCount))}
             </span>

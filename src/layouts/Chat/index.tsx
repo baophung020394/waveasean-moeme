@@ -15,13 +15,11 @@ import {
   subscribeToMessages,
   subscribeToProfile,
 } from "actions/channel";
+import LoadingView from "components/Spinner/LoadingView";
 
 interface ChatProps {}
 
 function Chat({}: ChatProps) {
-  // const [messageList, setMessageList] = useState<any>(
-  //   JSON.parse(localStorage.getItem("_messages"))
-  // );
   const dispatch: any = useDispatch();
   const { id }: any = useParams();
   const peopleWatchers: any = useRef({});
@@ -101,13 +99,19 @@ function Chat({}: ChatProps) {
     }
   }, [messages?.length]);
 
+  if (!activeChannel?.id) {
+    return <LoadingView message="Loading Chat..." />;
+  }
+
   return (
     <>
       <ChatStyled className="chat--view">
         <ChatBar channel={activeChannel} />
         <ChatMessageList innerRef={messageListRef} messages={messages} />
-        <ChatOptions submitStock={sendMessage} />
-        <Messanger onSubmit={sendMessage} />
+        {activeChannel?.enableWriteMsg === "1" && (
+          <ChatOptions submitStock={sendMessage} />
+        )}
+        <Messanger onSubmit={sendMessage} channel={activeChannel} />
       </ChatStyled>
     </>
   );

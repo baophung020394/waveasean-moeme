@@ -150,3 +150,20 @@ h6 {
     }
   }
 }
+
+/*
+Css for Modals
+*/
+.create--channel-modal {
+  .modal-content {
+    background-color: transparent;
+    border: none;
+  }
+  .modal-body {
+    padding: 0;
+  }
+
+  .modal-header {
+    border-bottom: none;
+  }
+}

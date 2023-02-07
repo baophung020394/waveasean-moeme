@@ -1,9 +1,10 @@
 import { createChannel, getChannelList, joinChannel } from "actions/channel";
 import CardChannel from "components/CardChannel";
+import CustomModal from "components/CustomModal";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { styled } from "utils/styled-component";
-
+import IconCreateChannel from "assets/images/channel/plus.png";
 interface NewChannelsProps {
   availableChannels: any;
   joinedChannels: any;
@@ -15,6 +16,7 @@ function NewChannels({
   joinedChannels,
   channels,
 }: NewChannelsProps) {
+  const [open, setOpen] = useState<boolean>(false);
   const [isGoChannel, setIsGoChannel] = useState<string>("");
   const dispatch: any = useDispatch();
   const user = useSelector(({ auth }) => auth.user);
@@ -24,8 +26,32 @@ function NewChannels({
     availableChannels?.map(({ roomId }: any) => roomId)
   );
 
+  const onCreateChannel = (data: any) => {
+    dispatch(createChannel(data, user.uid));
+    setOpen(false);
+  };
+
   return (
     <AvailableChatsStyled>
+      <div className="new-channels--header">
+        <button
+          className="new-channels--header__plus btn-hover"
+          onClick={() => setOpen(!open)}
+        >
+          <img className="icon40 img-show" src={IconCreateChannel} alt="" />
+          <img className="icon40 img-hover" src={IconCreateChannel} alt="" />
+        </button>
+
+        <CustomModal
+          title="Create channel"
+          btnOk="Create"
+          btnCancel="Cancel"
+          componentName="create--channel-modal"
+          open={open}
+          onClick={() => setOpen(!open)}
+          submitForm={onCreateChannel}
+        />
+      </div>
       <div className="availables container-fluid mt-3">
         {false && (
           <div className="availables--null">
@@ -57,7 +83,6 @@ function NewChannels({
               channels
                 .filter(({ roomId }: any) => !idsChannels.has(roomId))
                 .filter(({ roomId }: any) => !ids.has(roomId))
-
                 .filter(
                   (channel: any) =>
                     (channel?.room_type === "2" ||
@@ -87,9 +112,30 @@ function NewChannels({
 const AvailableChatsStyled = styled.div`
   width: 100%;
 
+  .new-channels--header {
+    padding: 0 20px;
+    border-bottom: 1px solid #e6ecf3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 91px;
+    max-height: 91px;
+
+    &__plus {
+      background: #3747a6;
+      border: 1px solid #3747a6;
+      border-radius: 100%;
+      box-shadow: 0 3px 6px 0 rgb(0 0 0 / 16%);
+
+      &:hover {
+        background: #4c59ac;
+      }
+    }
+  }
+
   .availables {
-    // display: flex;
-    // flex-wrap: wrap;
+    height: calc(100% - 107px);
+    overflow: auto;
 
     .available {
       min-width: 300px;
@@ -100,7 +146,6 @@ const AvailableChatsStyled = styled.div`
       &:last-child {
         margin-right: 0;
       }
-      
     }
 
     .available--created {

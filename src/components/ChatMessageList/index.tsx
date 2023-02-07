@@ -14,9 +14,13 @@ interface ChatMessageListProps {
 function ChatMessageList({ messages = [], innerRef }: ChatMessageListProps) {
   // const user = JSON.parse(localStorage.getItem("_profile"));
   const user = useSelector(({ auth }) => auth.user);
-  const isAuthorOf = (message: any) => {
-    return message?.author?.uid === user?.uid ? "chat-right" : "chat-left";
-  };
+
+  const isAuthorOf = useCallback(
+    (message: any) => {
+      return message?.author?.uid === user?.uid ? "chat-right" : "chat-left";
+    },
+    [messages]
+  );
 
   return (
     <ChatMessageListStyled className="chat--container">

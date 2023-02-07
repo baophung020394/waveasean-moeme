@@ -26,7 +26,7 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
   }
 
   return (
-    <ChannelListStyled>
+    <ChannelListStyled className="channel-list">
       <Title name="Channel" />
       <div className="card--container">
         {joinedChannels?.length > 0 &&
@@ -50,8 +50,7 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
 }
 
 const ChannelListStyled = styled.div`
-  // min-width: 420px;
-  // border-right: 1px solid #e6ecf3;
+  height: 100%;
 
   .card--container {
     padding: 10px;

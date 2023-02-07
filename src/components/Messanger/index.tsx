@@ -24,11 +24,12 @@ import * as htmlToImage from "html-to-image";
 import { createTimestamp } from "utils/time";
 
 interface MessangerProps {
+  channel: any;
   onSubmit: (message: any) => void;
 }
 
-function Messanger({ onSubmit }: MessangerProps) {
-  const [selectedImage, setSelectedImage] = useState();
+function Messanger({ onSubmit, channel }: MessangerProps) {
+  console.log(channel);
   const [value, setValue] = useState<any>("");
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const _messages = JSON.parse(localStorage.getItem("_messages"));
@@ -56,8 +57,6 @@ function Messanger({ onSubmit }: MessangerProps) {
    * */
   const imageChange = (e: any) => {
     if (e.target.files && e.target.files.length > 0) {
-      console.log(e.target.files[0]);
-      setSelectedImage(e.target.files[0]);
       const image = e.target.files[0];
 
       const reader = new FileReader();
@@ -75,8 +74,6 @@ function Messanger({ onSubmit }: MessangerProps) {
         };
 
         onSubmit(newMessage);
-
-        // localStorage.setItem("_messages", JSON.stringify(newMessage));
       };
     }
   };
@@ -91,26 +88,6 @@ function Messanger({ onSubmit }: MessangerProps) {
       sendMessage();
       setValue("");
     }
-  };
-
-  const handler = (inputBlob: any) => {
-    const url = URL.createObjectURL(inputBlob);
-    console.log(url);
-    // Creates URL to the image Blob in memory
-
-    // const a = document.createElement("a");
-    // a.setAttribute("href", url);
-    // a.setAttribute("download", "fetched-image.jpeg");
-    // // Create a download link in HTML
-
-    // a.style.display = "none";
-    // document.body.appendChild(a);
-
-    // a.click(); // Simulates click
-
-    // document.body.removeChild(a);
-    // URL.revokeObjectURL(url);
-    // Removes download link and image URL and image from memory
   };
 
   // const URLtoFile = async (url: string) => {
@@ -153,26 +130,6 @@ function Messanger({ onSubmit }: MessangerProps) {
   //   // console.log(file);
   // };
 
-  // const funcRequest = async (url: string) => {
-  //   await fetch(url)
-  //     .then((response) => {
-  //       // console.log({ response });
-  //       // console.log(
-  //       //   response.text().then((_) => {
-  //       //     console.log(_);
-  //       //     // handler(_);
-  //       //   })
-  //       // );
-  //       return response.json(); // data into json
-  //     })
-  //     .then((data) => {
-  //       console.log(data);
-  //       // Here we can use the response Data
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // };
   /**
    * Submit form data
    * @returns
@@ -218,7 +175,11 @@ function Messanger({ onSubmit }: MessangerProps) {
   }, [value]);
 
   return (
-    <MessangerStyled className="chat-input form-group mt-3 mb-0">
+    <MessangerStyled
+      className={`${
+        channel?.enableWriteMsg === "0" ? "enableWriteMsg" : ""
+      } chat-input form-group mt-3 mb-0`}
+    >
       <textarea
         id="text-area"
         ref={textareaRef}
@@ -226,8 +187,13 @@ function Messanger({ onSubmit }: MessangerProps) {
         onKeyPress={onKeyPress}
         value={value}
         className="form-control"
-        placeholder="Type your message here..."
+        placeholder={`${
+          channel?.enableWriteMsg === "0"
+            ? "Chat is disabled"
+            : "Type your message here..."
+        } `}
       ></textarea>
+
       <div className="chat-input__options">
         <div className="chat-input__options__left">
           <button className="btn-hover mr-3">
@@ -290,7 +256,7 @@ function Messanger({ onSubmit }: MessangerProps) {
               setValue("");
             }}
           >
-            {value?.length > 0 ? (
+            {value?.length > 0 && channel?.enableWriteMsg === "1" ? (
               <img className="icon24 img-hover" src={IconChatBlue} alt="" />
             ) : (
               <img className="icon24 img-show" src={IconChatGrey} alt="" />
@@ -303,11 +269,35 @@ function Messanger({ onSubmit }: MessangerProps) {
 }
 
 const MessangerStyled = styled.div`
+  position: relative;
   border: 1px solid #e2e2e2;
   max-width: 97%;
   width: 100%;
   margin: auto;
   border-radius: 8px;
+
+  &.enableWriteMsg {
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 99;
+    }
+
+    textarea {
+      color: #ccc;
+      font-size: 14px;
+      position: relative;
+
+      &::placeholder {
+        color: #ccc;
+        font-size: 14px;
+      }
+    }
+  }
 
   textarea {
     border: none;

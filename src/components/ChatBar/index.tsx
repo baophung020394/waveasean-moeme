@@ -24,11 +24,19 @@ function ChatBar({ channel }: ChatBarProps) {
               data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=7&serverfile=thumb_${channel.room_profile_image}`}
               type="image/png"
             >
-              <img
-                src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
-                alt="avatar"
-                className="icon40 avatar"
-              />
+              {channel?.device === "web" ? (
+                <img
+                  className="image-chat"
+                  src={JSON.parse(channel?.room_profile_image)}
+                  alt="Thumb"
+                />
+              ) : (
+                <img
+                  src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
+                  alt="avatar"
+                  className="icon40 avatar"
+                />
+              )}
             </object>
           ) : (
             <img
@@ -48,7 +56,8 @@ function ChatBar({ channel }: ChatBarProps) {
             </div>
             <div className="chat--bar__infor__groupname__bottom">
               <p className="user">
-                {channel?.owner_name}-{channel?.ownerId}
+                {channel?.owner_name}-{channel?.ownerId} -
+                {channel?.enableWriteMsg}
               </p>
             </div>
           </div>
