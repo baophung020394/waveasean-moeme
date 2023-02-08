@@ -14,7 +14,7 @@ import Form from "react-bootstrap/Form";
 
 interface CreateChannelProps {
   submitForm?: (data: any) => void;
-  closeFunc?: (state: boolean) => void;
+  closeFunc?: () => void;
   title?: string;
   bgColor?: string;
 }
@@ -72,7 +72,7 @@ function CreateChannel({
       <Modal.Header className="create--channel--header">
         <button
           className="create--channel--header__plus close-btn btn-hover"
-          onClick={() => {}}
+          onClick={closeFunc}
         >
           <img className="icon24 img-show" src={IconClose} alt="" />
           <img className="icon24 img-hover" src={IconClose} alt="" />

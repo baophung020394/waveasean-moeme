@@ -12,16 +12,11 @@ import styled from "styled-components";
 interface ChannelProps {}
 
 function Channel() {
-  // const channelDetail = useSelector(({ channel }) => channel.channelDetail);
-  // const { id }: any = useParams();
   const profile = JSON.parse(localStorage.getItem("_profile"));
   const joinedChannels = useSelector(({ channel }) => channel.joined);
   const availableChannels = useSelector(({ channel }) => channel.available);
   const channels = useSelector(({ channel }) => channel.channel);
   const dispatch: any = useDispatch();
-  // const activeChannel = useSelector(
-  //   ({ channel }) => channel.activeChannels[id]
-  // );
 
   useEffect(() => {
     dispatch(fetchChannels());
@@ -30,19 +25,6 @@ function Channel() {
   useEffect(() => {
     dispatch(getChannelList(profile?.params.userId));
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     const unsubFromChannel = dispatch(subscribeToChannel(id));
-  //     return () => {
-  //       unsubFromChannel();
-  //     };
-  //   }
-  // }, [id]);
-
-  // if (isChecking) {
-  //   return <LoadingView />;
-  // }
 
   return (
     <ChannelStyled className="channel-container">
@@ -54,15 +36,6 @@ function Channel() {
         joinedChannels={joinedChannels}
         channels={channels?.length > 0 && channels}
       />
-      {/* {activeChannel?.id ? (
-        <Chat />
-      ) : (
-        <NewChannels
-          availableChannels={availableChannels}
-          joinedChannels={joinedChannels}
-          channels={channels?.length > 0 && channels}
-        />
-      )} */}
     </ChannelStyled>
   );
 }

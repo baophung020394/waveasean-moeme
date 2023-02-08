@@ -242,7 +242,6 @@ const ChatMessageListStyled = styled.div`
   overflow: auto;
   flex: 1 1 100%;
 
-  
   /* Track */
   /* width */
   &::-webkit-scrollbar {
@@ -252,6 +251,14 @@ const ChatMessageListStyled = styled.div`
     background: transparent;
   }
 
+  ul {
+    li {
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
   li.chat-right,
   li.chat-left {
     display: flex;

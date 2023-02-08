@@ -163,7 +163,7 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
           </div>
           <div className="card--bottom__buyer">
             <p className="card--bottom__buyer--name">
-              {channel?.enableWriteMsg} -{" "}
+              Buyer
             </p>
             <span className="card--bottom__buyer--quantity">
               {currencyFormat(Number(channel?.userCount))}

@@ -320,6 +320,10 @@ const MessangerStyled = styled.div`
       border-bottom: 1px solid #e2e2e2;
       box-shadow: none;
     }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   .chat-input__options {

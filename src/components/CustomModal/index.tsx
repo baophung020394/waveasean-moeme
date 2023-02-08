@@ -37,6 +37,7 @@ function CustomModal({
             title={title}
             bgColor="https://images.unsplash.com/photo-1534841090574-cba2d662b62e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MjB8fHxlbnwwfHx8fA%3D%3D&w=1000&q=80"
             submitForm={submitForm}
+            closeFunc={onClick}
           />
         </Modal.Body>
       </Modal>

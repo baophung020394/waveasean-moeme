@@ -92,7 +92,7 @@ export const createChannel =
     fetchChnls = fetchChnls.filter(
       ({ roomId }: any) => roomId === newChannel?.roomId
     );
-    console.log("after", fetchChnls);
+
     if (fetchChnls?.length > 0) {
       dispatch({
         type: "CHANNELS_CREATE_FAIL",

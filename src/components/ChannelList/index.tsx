@@ -19,7 +19,7 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
 
   return (
     <ChannelListStyled className="channel-list">
-      <Title name="Channel" />
+      <Title name="Channels joined" />
       <div className="card--container">
         {joinedChannels?.length > 0 &&
           joinedChannels

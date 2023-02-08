@@ -18,6 +18,7 @@ import {
 } from "actions/channel";
 import LoadingView from "components/Spinner/LoadingView";
 import ChannelList from "components/ChannelList";
+import { withBaseLayout } from "layouts/Base";
 
 interface ChatProps {}
 
@@ -146,4 +147,4 @@ const ChatStyled = styled.div`
   }
 `;
 
-export default Chat;
+export default withBaseLayout(Chat);
