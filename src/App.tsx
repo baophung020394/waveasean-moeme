@@ -1,6 +1,6 @@
 import { listenToConnectionChanges } from "actions/app";
 import LoadingView from "components/Spinner/LoadingView";
-import Chat from "layouts/Chat";
+import ChatView from "layouts/Chat";
 import ChannelView from "layouts/Channel";
 import HomeView from "layouts/Home";
 import LoginView from "layouts/Login";
@@ -22,7 +22,7 @@ import { listenToAuthChanges } from "actions/auth";
 import { checkUserConnection } from "actions/connection";
 import Test from "layouts/Test";
 
-function AuthRoute({ children, ...rest }: any) {
+export const AuthRoute = ({ children, ...rest }: any) => {
   const token = getAccessToken();
   const user = useSelector(({ auth }) => auth.user);
   const onlyChild = React.Children.only(children);
@@ -38,7 +38,7 @@ function AuthRoute({ children, ...rest }: any) {
       }
     />
   );
-}
+};
 
 const ContentWrapper = ({ children }: any) => (
   <div className="content-page">{children}</div>
@@ -95,8 +95,8 @@ function MoeMe() {
           <AuthRoute path="/channel">
             <ChannelView />
           </AuthRoute>
-          <AuthRoute exact path="/channel-detail/:id">
-            <ChannelView />
+          <AuthRoute path="/channel-detail/:id">
+            <ChatView />
           </AuthRoute>
           <AuthRoute path="/profile">
             <ProfileView />

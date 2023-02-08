@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { styled } from "utils/styled-component";
 import IconCreateChannel from "assets/images/channel/plus.png";
+import LoadingView from "components/Spinner/LoadingView";
 interface NewChannelsProps {
   availableChannels: any;
   joinedChannels: any;
@@ -20,6 +21,7 @@ function NewChannels({
   const [isGoChannel, setIsGoChannel] = useState<string>("");
   const dispatch: any = useDispatch();
   const user = useSelector(({ auth }) => auth.user);
+  
 
   let ids = new Set(joinedChannels.map(({ roomId }: any) => roomId));
   let idsChannels = new Set(
@@ -140,7 +142,7 @@ const AvailableChatsStyled = styled.div`
     .available {
       min-width: 300px;
       max-width: 25%;
-      flex: 1 1 auto;
+      flex: 1 1 23%;
       margin-right: 16px;
 
       &:last-child {

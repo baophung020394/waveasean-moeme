@@ -65,7 +65,7 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
   };
 
   const onChooseChannel = async (channel: any) => {
-    console.log({ isGoChannel });
+    console.log('channel-detail', channel)
     switch (isGoChannel) {
       case "GO_CHANNEL":
         return history.push(`/channel-detail/${channel?.id}`);
@@ -77,12 +77,6 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
       default:
         return history.push(`/channel-detail/${channel?.id}`);
     }
-
-    // if (!onClick) {
-    //   history.push(`/channel/${channel?.id}`);
-    // } else {
-    //   askForConfirmtionNewChannel(channel);
-    // }
 
     // dispatch({
     //   type: "CHOOSE_CHANNEL",
@@ -168,7 +162,9 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
             </span>
           </div>
           <div className="card--bottom__buyer">
-            <p className="card--bottom__buyer--name">{channel?.enableWriteMsg} - </p>
+            <p className="card--bottom__buyer--name">
+              {channel?.enableWriteMsg} -{" "}
+            </p>
             <span className="card--bottom__buyer--quantity">
               {currencyFormat(Number(channel?.userCount))}
             </span>

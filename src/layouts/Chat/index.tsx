@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { MESSAGES } from "mocks/chat";
 import {
+  fetchChannels,
   registerMessageSubscription,
   sendChannelMessage,
   subscribeToChannel,
@@ -16,20 +17,20 @@ import {
   subscribeToProfile,
 } from "actions/channel";
 import LoadingView from "components/Spinner/LoadingView";
+import ChannelList from "components/ChannelList";
 
 interface ChatProps {}
 
 function Chat({}: ChatProps) {
-  const dispatch: any = useDispatch();
   const { id }: any = useParams();
+  const dispatch: any = useDispatch();
   const peopleWatchers: any = useRef({});
   const activeChannel = useSelector(
     ({ channel }) => channel.activeChannels[id]
   );
+  const joinedChannels = useSelector(({ channel }) => channel.joined);
   const messages = useSelector(({ channel }) => channel.messages[id]);
   const messageSubs = useSelector(({ channel }) => channel.messageSubs[id]);
-
-  const messageListRef = useRef<any>({});
   const joinedUsers = activeChannel?.joinedUsers;
 
   useEffect(() => {
@@ -44,7 +45,7 @@ function Chat({}: ChatProps) {
       unsubFromChannel();
       unsubFromJoinedUsers();
     };
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     joinedUsers && subscribeToJoinedUsers(joinedUsers);
@@ -85,43 +86,66 @@ function Chat({}: ChatProps) {
 
   const sendMessage = useCallback(
     (message) => {
-      console.log({ message });
-      dispatch(sendChannelMessage(message, id)).then((_: any) =>
-        messageListRef.current.scrollIntoView(false)
-      );
+      dispatch(sendChannelMessage(message, id));
     },
     [id]
   );
-
-  useEffect(() => {
-    if (messages) {
-      messageListRef.current.scrollIntoView(false);
-    }
-  }, [messages?.length]);
 
   if (!activeChannel?.id) {
     return <LoadingView message="Loading Chat..." />;
   }
 
   return (
-    <>
-      <ChatStyled className="chat--view">
+    <ChatStyled className="chat--view">
+      <div className="chat--view__channels">
+        <ChannelList joinedChannels={joinedChannels} />
+      </div>
+      <div className="chat--view__content">
         <ChatBar channel={activeChannel} />
-        <ChatMessageList innerRef={messageListRef} messages={messages} />
-        {activeChannel?.enableWriteMsg === "1" && (
-          <ChatOptions submitStock={sendMessage} />
-        )}
-        <Messanger onSubmit={sendMessage} channel={activeChannel} />
-      </ChatStyled>
-    </>
+        <div className="chat--view__content__chat">
+          <ChatMessageList messages={messages} />
+          <div className="chat--view__content__options">
+            {activeChannel?.enableWriteMsg === "1" && (
+              <ChatOptions submitStock={sendMessage} />
+            )}
+          </div>
+          <Messanger onSubmit={sendMessage} channel={activeChannel} />
+        </div>
+      </div>
+    </ChatStyled>
   );
 }
 
 const ChatStyled = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  padding-bottom: 16px;
+  flex-direction: row;
+
+  .chat--view {
+    &__channels {
+      min-width: 420px;
+      border-right: 1px solid #e6ecf3;
+    }
+
+    &__content {
+      height: 100%;
+      width: 100%;
+      padding-bottom: 56px;
+
+      &__chat {
+        // height: calc(100% - 0px);
+        // overflow: auto;
+        height: calc(100% - 61px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      &__options {
+        flex: 1 1 55px;
+      }
+    }
+  }
 `;
 
 export default Chat;

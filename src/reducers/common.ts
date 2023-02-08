@@ -15,8 +15,9 @@ export const createIsFetchingReducer =
   (actionType: any) =>
   (state = false, action: any) => {
     switch (action.type) {
-      case `${actionType}_INIT`:
+      case `${actionType}_INIT`: {
         return true;
+      }
       case `${actionType}_SUCCESS`:
       case `${actionType}_ERROR`:
         return false;

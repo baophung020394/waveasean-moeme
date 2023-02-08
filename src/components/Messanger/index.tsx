@@ -275,7 +275,8 @@ const MessangerStyled = styled.div`
   width: 100%;
   margin: auto;
   border-radius: 8px;
-
+  flex: 1 1 115px;
+  
   &.enableWriteMsg {
     &::before {
       content: "";

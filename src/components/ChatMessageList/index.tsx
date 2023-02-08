@@ -1,6 +1,6 @@
 import ChatOptions from "components/ChatOptions";
 import Stocks from "components/Stocks";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { formatTimeAgo } from "utils/time";
@@ -8,12 +8,12 @@ import { isEmojisOnly } from "utils/convertString";
 
 interface ChatMessageListProps {
   messages: any;
-  innerRef: any;
 }
 
-function ChatMessageList({ messages = [], innerRef }: ChatMessageListProps) {
+function ChatMessageList({ messages = [] }: ChatMessageListProps) {
   // const user = JSON.parse(localStorage.getItem("_profile"));
   const user = useSelector(({ auth }) => auth.user);
+  const messagesRef = useRef<any>({});
 
   const isAuthorOf = useCallback(
     (message: any) => {
@@ -22,9 +22,15 @@ function ChatMessageList({ messages = [], innerRef }: ChatMessageListProps) {
     [messages]
   );
 
+  useEffect(() => {
+    if (messages && messages?.length > 0 && messagesRef) {
+      messagesRef?.current?.scrollIntoView(false);
+    }
+  }, [messages?.length, messagesRef]);
+
   return (
     <ChatMessageListStyled className="chat--container">
-      <ul ref={innerRef} className="chat-box chatContainerScroll">
+      <ul ref={messagesRef} className="chat-box chatContainerScroll">
         {messages?.map((message: any, idx: number) => {
           if (message?.stocks) {
             return (
@@ -234,8 +240,9 @@ const ChatMessageListStyled = styled.div`
   padding: 16px;
   background-color: #ccc;
   overflow: auto;
-  height: 100%;
-
+  flex: 1 1 100%;
+  
+  
   /* Track */
   /* width */
   &::-webkit-scrollbar {
@@ -263,6 +270,7 @@ const ChatMessageListStyled = styled.div`
 
     .chat-text-wrapper {
       align-self: flex-start;
+      word-break: break-all;
 
       &.hasEmoj {
         background-color: transparent;

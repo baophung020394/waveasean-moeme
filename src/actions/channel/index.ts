@@ -3,7 +3,7 @@ import * as api from "api/channel";
 import db from "db/firestore";
 
 export const getChannelList = (userId: string) => (dispatch: any) => {
-  console.log({userId})
+  console.log({ userId });
   dispatch({
     type: "CHANNEL_ON_INIT",
   });
@@ -85,16 +85,29 @@ export const subscribeToProfile =
 export const createChannel =
   (formData: any, userId: any) => async (dispatch: any) => {
     const newChannel = { ...formData };
+    let fetchChnls = await api.fetchChannels();
+    console.log("before ", fetchChnls);
+    let ids = new Set(fetchChnls.map(({ roomId }: any) => roomId));
 
-    newChannel.admin = db.doc(`profiles/${userId}`);
-    const channelId = await api.createChannel(newChannel);
-    dispatch({ type: "CHANNELS_CREATE_SUCCESS" });
-    await api.joinChannel(userId, channelId);
-    dispatch({
-      type: "CHANNELS_JOIN_SUCCESS",
-      channel: { ...newChannel, id: channelId },
-    });
-    return channelId;
+    fetchChnls = fetchChnls.filter(
+      ({ roomId }: any) => roomId === newChannel?.roomId
+    );
+    console.log("after", fetchChnls);
+    if (fetchChnls?.length > 0) {
+      dispatch({
+        type: "CHANNELS_CREATE_FAIL",
+      });
+    } else {
+      newChannel.admin = db.doc(`profiles/${userId}`);
+      const channelId = await api.createChannel(newChannel);
+      dispatch({ type: "CHANNELS_CREATE_SUCCESS" });
+      await api.joinChannel(userId, channelId);
+      dispatch({
+        type: "CHANNELS_JOIN_SUCCESS",
+        channel: { ...newChannel, id: channelId },
+      });
+      return channelId;
+    }
   };
 
 export const sendChannelMessage =

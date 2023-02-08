@@ -1,17 +1,9 @@
-import {
-  getChannelList,
-  createChannel,
-  fetchChannels,
-  fetchChannelsCompare,
-} from "actions/channel";
 import CardChannel from "components/CardChannel";
 import LoadingView from "components/Spinner/LoadingView";
 import Title from "components/Title";
 import { Channel } from "models/channel";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
-import { getUser } from "services/TokenService";
+import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 interface ChannelListProps {
@@ -31,11 +23,6 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
       <div className="card--container">
         {joinedChannels?.length > 0 &&
           joinedChannels
-            // ?.filter(
-            //   (channel: any) =>
-            //     (channel?.room_type === "2" || channel?.room_type === "3") &&
-            //     channel?.ownserId !== user.uid
-            // )
             ?.map((channel: Channel, index: number) => {
               return (
                 <CardChannel

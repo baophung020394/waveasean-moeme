@@ -115,9 +115,9 @@ function createChannelReducer() {
     messages,
     messageSubs,
     channel,
-    channelDetail,
-    channelsCompare,
-    isChecking: createIsFetchingReducer("CHANNEL_ON"),
+    // channelsCompare,
+    // channelDetail,
+    // isChecking: createIsFetchingReducer("CHANNEL_ON"),
   });
 }
 
