@@ -134,8 +134,6 @@ const ChatStyled = styled.div`
       padding-bottom: 56px;
 
       &__chat {
-        // height: calc(100% - 0px);
-        // overflow: auto;
         height: calc(100% - 61px);
         display: flex;
         flex-direction: column;

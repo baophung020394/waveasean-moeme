@@ -241,7 +241,7 @@ const ChatMessageListStyled = styled.div`
   background-color: #ccc;
   overflow: auto;
   flex: 1 1 100%;
-  
+
   
   /* Track */
   /* width */

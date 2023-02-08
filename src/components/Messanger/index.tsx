@@ -276,7 +276,7 @@ const MessangerStyled = styled.div`
   margin: auto;
   border-radius: 8px;
   flex: 1 1 115px;
-  
+
   &.enableWriteMsg {
     &::before {
       content: "";
@@ -306,7 +306,7 @@ const MessangerStyled = styled.div`
     resize: none;
     padding: 16px;
     border-bottom: 1px solid #e2e2e2;
-    overflow: hidden;
+    overflow: auto;
     border-radius: 0;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;

@@ -19,11 +19,8 @@ import StoreProvider from "store/StoreProvider";
 import styled from "styled-components";
 import Header from "./components/common/Header";
 import { listenToAuthChanges } from "actions/auth";
-import { checkUserConnection } from "actions/connection";
-import Test from "layouts/Test";
 
 export const AuthRoute = ({ children, ...rest }: any) => {
-  const token = getAccessToken();
   const user = useSelector(({ auth }) => auth.user);
   const onlyChild = React.Children.only(children);
   return (
