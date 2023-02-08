@@ -70,7 +70,6 @@ export const subscribeToChannel = (channelId: string) => (dispatch: any) =>
   });
 
 export const joinChannel = (channel: any, uid: string) => (dispatch: any) => {
-  console.log("join channel", channel);
   return api.joinChannel(uid, channel?.id).then((channelId) => {
     dispatch({ type: "CHANNELS_JOIN_SUCCESS", channel });
   });
@@ -94,8 +93,13 @@ export const createChannel =
     );
 
     if (fetchChnls?.length > 0) {
+      const error = {
+        type: "error",
+        message: "The channel is duplicate, please refresh page!",
+      };
       dispatch({
         type: "CHANNELS_CREATE_FAIL",
+        error,
       });
     } else {
       newChannel.admin = db.doc(`profiles/${userId}`);

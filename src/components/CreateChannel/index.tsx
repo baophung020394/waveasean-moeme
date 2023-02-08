@@ -24,7 +24,7 @@ function CreateChannel({
   closeFunc,
   submitForm,
 }: CreateChannelProps) {
-  const [selectedImage, setSelectedImage] = useState<any>();
+  const [selectedImage, setSelectedImage] = useState<any>("");
   const { register, handleSubmit } = useForm();
   const user = useSelector(({ auth }) => auth.user);
   let myuuid = uuidv4();

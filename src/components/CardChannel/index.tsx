@@ -65,13 +65,15 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
   };
 
   const onChooseChannel = async (channel: any) => {
-    console.log('channel-detail', channel)
+    console.log("channel-detail", channel);
     switch (isGoChannel) {
       case "GO_CHANNEL":
         return history.push(`/channel-detail/${channel?.id}`);
       case "CREATE_CHANNEL":
+        dispatch({ type: "CHANNELS_CREATE_INIT" });
         return askForConfirmtionOldChannel(channel);
       case "JOIN_CHANNEL":
+        dispatch({ type: "CHANNELS_JOIN_INIT" });
         return askForConfirmtionNewChannel(channel);
 
       default:
@@ -91,6 +93,8 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
 
     if (isConfirming) {
       dispatch(createChannel(channel, user.uid));
+    } else {
+      dispatch({ type: "CHANNELS_CREATE_FAIL" });
     }
   };
 
@@ -101,6 +105,8 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
 
     if (isConfirming) {
       dispatch(joinChannel(channel, user.uid));
+    } else {
+      dispatch({ type: "CHANNELS_JOIN_FAIL" });
     }
   };
 
@@ -118,7 +124,8 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
               data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=7&serverfile=thumb_${channel.room_profile_image}`}
               type="image/png"
             >
-              {channel?.device === "web" ? (
+              {channel?.device === "web" &&
+              channel?.room_profile_image !== "" ? (
                 <img
                   className="image-chat"
                   src={JSON.parse(channel?.room_profile_image)}
@@ -162,9 +169,7 @@ function CardChannel({ channel, onClick, isGoChannel }: CardChannelProps) {
             </span>
           </div>
           <div className="card--bottom__buyer">
-            <p className="card--bottom__buyer--name">
-              Buyer
-            </p>
+            <p className="card--bottom__buyer--name">Buyer</p>
             <span className="card--bottom__buyer--quantity">
               {currencyFormat(Number(channel?.userCount))}
             </span>

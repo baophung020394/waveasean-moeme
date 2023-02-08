@@ -108,6 +108,27 @@ function createChannelReducer() {
     }
   };
 
+  const isLoading = (state: initialState = null, action: any) => {
+    console.log("action", action);
+    switch (action.type) {
+      case "CHANNELS_JOIN_INIT":
+      case "CHANNELS_CREATE_INIT":
+        return {
+          result: true,
+        };
+      case "CHANNELS_JOIN_FAIL":
+      case "CHANNELS_CREATE_FAIL":
+      case "CHANNELS_CREATE_SUCCESS":
+        return {
+          result: false,
+          error: action?.error || {},
+        };
+
+      default:
+        return false;
+    }
+  };
+
   return combineReducers({
     joined,
     available,
@@ -115,6 +136,7 @@ function createChannelReducer() {
     messages,
     messageSubs,
     channel,
+    isLoading: isLoading,
     // channelsCompare,
     // channelDetail,
     // isChecking: createIsFetchingReducer("CHANNEL_ON"),

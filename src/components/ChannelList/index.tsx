@@ -14,7 +14,7 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
   const isChecking = useSelector(({ channel }) => channel.isChecking);
 
   if (isChecking) {
-    return <LoadingView />;
+    return <LoadingView message="Load channels...." />;
   }
 
   return (

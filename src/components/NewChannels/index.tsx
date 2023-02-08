@@ -6,6 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { styled } from "utils/styled-component";
 import IconCreateChannel from "assets/images/channel/plus.png";
 import LoadingView from "components/Spinner/LoadingView";
+import CreateChannel from "components/CreateChannel";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Error from "components/Error";
+
 interface NewChannelsProps {
   availableChannels: any;
   joinedChannels: any;
@@ -18,10 +23,12 @@ function NewChannels({
   channels,
 }: NewChannelsProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
   const [isGoChannel, setIsGoChannel] = useState<string>("");
   const dispatch: any = useDispatch();
   const user = useSelector(({ auth }) => auth.user);
-  
+  const isChecking = useSelector(({ channel }) => channel.isLoading);
+  const error = useSelector(({ channel }) => channel?.isLoading.error);
 
   let ids = new Set(joinedChannels.map(({ roomId }: any) => roomId));
   let idsChannels = new Set(
@@ -29,9 +36,14 @@ function NewChannels({
   );
 
   const onCreateChannel = (data: any) => {
+    dispatch({ type: "CHANNELS_CREATE_INIT" });
     dispatch(createChannel(data, user.uid));
     setOpen(false);
   };
+
+  if (isChecking?.result) {
+    return <LoadingView message="Creating channel..." />;
+  }
 
   return (
     <AvailableChatsStyled>
@@ -46,13 +58,28 @@ function NewChannels({
 
         <CustomModal
           title="Create channel"
-          btnOk="Create"
-          btnCancel="Cancel"
           componentName="create--channel-modal"
           open={open}
           onClick={() => setOpen(!open)}
-          submitForm={onCreateChannel}
-        />
+          submitForm={() => {}}
+        >
+          <CreateChannel
+            title="Create channel"
+            bgColor="https://images.unsplash.com/photo-1534841090574-cba2d662b62e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MjB8fHxlbnwwfHx8fA%3D%3D&w=1000&q=80"
+            submitForm={onCreateChannel}
+            closeFunc={() => setOpen(!open)}
+          />
+        </CustomModal>
+
+        <CustomModal
+          title="Create channel fail"
+          componentName="create--channel-error-modal"
+          open={error && error?.message?.length > 0}
+          onClick={() => dispatch({ type: "CHANNELS_CREATE_FAIL" })}
+          submitForm={() => {}}
+        >
+          <Error error={error} />
+        </CustomModal>
       </div>
       <div className="availables container-fluid mt-3">
         {false && (

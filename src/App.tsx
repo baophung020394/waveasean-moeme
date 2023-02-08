@@ -45,7 +45,6 @@ function MoeMe() {
   const dispatch: any = useDispatch();
   const isOnline = useSelector(({ app }) => app.isOnline);
   const isChecking = useSelector(({ auth }) => auth.isChecking);
-  const user = useSelector(({ auth }) => auth.user);
 
   useEffect(() => {
     const unsubFromAuth = dispatch(listenToAuthChanges());
@@ -75,7 +74,7 @@ function MoeMe() {
   }
 
   if (isChecking) {
-    return <LoadingView />;
+    return <LoadingView message="Load app..." />;
   }
 
   return (
