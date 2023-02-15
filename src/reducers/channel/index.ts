@@ -8,12 +8,18 @@ interface initialState {
 }
 
 function createChannelReducer() {
+  // CHANNELS_MESSAGE_UPDATE_READ: (state: any, action) => {
+  // const { channel } = action;
+  // console.log("channel read", channel);
+  //   state[channel.id] = channel;
+  // },
   const joined = (state: any = [], action: any) => {
     switch (action.type) {
       case "CHANNELS_FETCH_RESTART":
         return [];
       case "CHANNELS_FETCH_SUCCESS":
         return action.joined;
+
       case "CHANNELS_JOIN_SUCCESS":
         return [...state, action.channel];
       default:
@@ -27,7 +33,9 @@ function createChannelReducer() {
       case "CHANNELS_FETCH_SUCCESS":
         return action.available;
       case "CHANNELS_JOIN_SUCCESS":
-        return state.filter((channel: any) => channel.id !== action.channel.id);
+        return state.filter(
+          (channel: any) => channel.id !== action?.channel?.id
+        );
       default:
         return state;
     }
@@ -78,6 +86,15 @@ function createChannelReducer() {
     }
   };
 
+  const notificationChnl = (state: initialState = null, action: any) => {
+    switch (action.type) {
+      case "SET_NOTIFICATIONS":
+        return action.notificationChnl;
+      default:
+        return state;
+    }
+  };
+
   const channelDetail = (state: initialState = null, action: any) => {
     switch (action.type) {
       case "CHOOSE_CHANNEL":
@@ -92,7 +109,6 @@ function createChannelReducer() {
     {
       CHANNELS_SET_MESSAGES: (state: any, action) => {
         const prevMessage = state[action.channelId] || [];
-
         state[action.channelId] = [...prevMessage, ...action.messages];
       },
     }
@@ -108,8 +124,38 @@ function createChannelReducer() {
     }
   };
 
+  const messageSubsNotifications = (state = {}, action: any) => {
+    switch (action.type) {
+      case "CHANNELS_REGISTER_MESSAGE_SUB":
+        return { ...state, [action.channelId]: action.sub };
+
+      default:
+        return state;
+    }
+  };
+
+  const notifications = (state = {}, action: any) => {
+    switch (action.type) {
+      case "GET_LIST_NOTIFICATION": {
+        console.log("action.id", action);
+        return action.notifications;
+      }
+
+      default:
+        return state;
+    }
+  };
+
+  const currentChannel = (state = {}, action: any) => {
+    switch (action.type) {
+      case "SET_CHANNEL_CURRENT":
+        return action.channel;
+      default:
+        return null;
+    }
+  };
+
   const isLoading = (state: initialState = null, action: any) => {
-    console.log("action", action);
     switch (action.type) {
       case "CHANNELS_JOIN_INIT":
       case "CHANNELS_CREATE_INIT":
@@ -137,6 +183,10 @@ function createChannelReducer() {
     messageSubs,
     channel,
     isLoading: isLoading,
+    notificationChnl,
+    currentChannel,
+    messageSubsNotifications,
+    notifications,
     // channelsCompare,
     // channelDetail,
     // isChecking: createIsFetchingReducer("CHANNEL_ON"),

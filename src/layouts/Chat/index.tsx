@@ -7,9 +7,9 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { MESSAGES } from "mocks/chat";
+
 import {
-  fetchChannels,
+  clearNotifications,
   registerMessageSubscription,
   sendChannelMessage,
   subscribeToChannel,
@@ -32,6 +32,7 @@ function Chat({}: ChatProps) {
   const joinedChannels = useSelector(({ channel }) => channel.joined);
   const messages = useSelector(({ channel }) => channel.messages[id]);
   const messageSubs = useSelector(({ channel }) => channel.messageSubs[id]);
+
   const joinedUsers = activeChannel?.joinedUsers;
 
   useEffect(() => {
@@ -70,20 +71,6 @@ function Chat({}: ChatProps) {
       peopleWatchers.current[id]()
     );
   }, [peopleWatchers.current]);
-
-  // const sendMessage = (message: any) => {
-  //   // alert(JSON.stringify(message));
-  //   console.log({ message });
-  //   console.log({ messageList });
-  //   const prevMessage = messageList || [];
-
-  //   const newMessage = [...prevMessage, { ...message }];
-  //   localStorage.setItem("_messages", JSON.stringify(newMessage));
-  //   console.log({ newMessage });
-
-  //   // dispatch(sendChatMessage(message, id));
-  //   setMessageList(newMessage);
-  // };
 
   const sendMessage = useCallback(
     (message) => {

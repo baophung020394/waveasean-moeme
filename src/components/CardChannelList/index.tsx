@@ -1,40 +1,34 @@
-import React, { useEffect } from "react";
-import styled from "styled-components";
-import { Channel } from "models/channel";
-import { currencyFormat } from "hooks/useFormatNumber";
-import STOIcon from "assets/images/icon/STO.png";
+import { clearNotifications, setCurrentChannel } from "actions/channel";
 import ORGIcon from "assets/images/icon/ORG.png";
 import PERIcon from "assets/images/icon/PER.png";
 import SPLIcon from "assets/images/icon/SPL.png";
+import STOIcon from "assets/images/icon/STO.png";
+import { currencyFormat } from "hooks/useFormatNumber";
+import { Channel } from "models/channel";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import {
-  createChannel,
-  fetchUnreads,
-  joinChannel,
-  setCurrentChannel,
-} from "actions/channel";
+import styled from "styled-components";
 
-interface CardChannelProps {
+interface CardChannelListProps {
   channel: Channel;
-  onClick?: () => void;
-  isGoChannel?: string;
-  unreads?: any;
-  count: any;
+  onClick?: (data: any) => void;
+  setChannel: (channel: any) => void;
+  // getNotificationCount?: any;
+  notifications: any;
+  setLastVisited: any;
 }
 
-function CardChannel({
+function CardChannelList({
   channel,
   onClick,
-  isGoChannel,
-  unreads,
-  count,
-}: CardChannelProps) {
+  setChannel,
+  notifications,
+  setLastVisited,
+}: CardChannelListProps) {
   const dispatch: any = useDispatch();
   const history = useHistory();
-  const user: any = useSelector(({ auth }) => auth.user);
-  const currentChannel = useSelector(({ channel }) => channel.currentChannel);
-
+  const user = useSelector(({ auth }) => auth.user);
   const renderChannelType = (channelType: string) => {
     switch (channelType) {
       case "STO":
@@ -79,59 +73,36 @@ function CardChannel({
   };
 
   const onChooseChannel = async (channel: any) => {
+    setChannel(channel);
     dispatch(setCurrentChannel(channel));
-
-    switch (isGoChannel) {
-      case "GO_CHANNEL": {
-        return history.push(`/channel-detail/${channel?.id}`);
-      }
-      case "CREATE_CHANNEL":
-        dispatch({ type: "CHANNELS_CREATE_INIT" });
-        return askForConfirmtionOldChannel(channel);
-      case "JOIN_CHANNEL":
-        dispatch({ type: "CHANNELS_JOIN_INIT" });
-        return askForConfirmtionNewChannel(channel);
-
-      default: {
-        return history.push(`/channel-detail/${channel?.id}`);
-      }
-    }
-
-    // dispatch({
-    //   type: "CHOOSE_CHANNEL",
-    //   channelDetail: channel,
-    // });
+    dispatch(clearNotifications(notifications, channel?.id));
+    setLastVisited(user, channel?.id);
+    history.push(`/channel-detail/${channel?.id}`);
   };
 
-  const askForConfirmtionOldChannel = (channel: any) => {
-    const isConfirming = confirm(
-      `Do you want to create & join channel: ${channel.room_name}`
-    );
+  const getNotificationCount = (channel: any) => {
+    let count = 0;
 
-    if (isConfirming) {
-      dispatch(createChannel(channel, user.uid));
-    } else {
-      dispatch({ type: "CHANNELS_CREATE_FAIL" });
+    notifications?.forEach((notification: any) => {
+      if (notification.id === channel.id) {
+        count = notification.count;
+      }
+    });
+
+    if (count > 0) {
+      console.log("count > 0", count);
+      return count;
     }
-  };
-
-  const askForConfirmtionNewChannel = (channel: any) => {
-    const isConfirming = confirm(
-      `Do you want to join channel: ${channel.room_name}`
-    );
-
-    if (isConfirming) {
-      dispatch(joinChannel(channel, user.uid));
-    } else {
-      dispatch({ type: "CHANNELS_JOIN_FAIL" });
-    }
+    // dispatch(setNotification(notifications));
   };
 
   return (
     <CardChannelStyled>
       <div
         className="card"
-        onClick={() => onChooseChannel(channel)}
+        onClick={() => {
+          onChooseChannel(channel);
+        }}
         key={`${channel?.room_name}-${channel?.id}`}
       >
         <div className="card--top">
@@ -161,16 +132,11 @@ function CardChannel({
               {renderChannelType(channel?.chnl_type)}
             </div>
           </div>
-          {count > 0 && (
+          {getNotificationCount(channel) && (
             <div className="card--top__notify">
-              <p>New - {count}</p>
+              <p>New - {getNotificationCount(channel)}</p>
             </div>
           )}
-          {/* {unreads?.length > 0 ? (
-            <div className="card--top__notify">
-              <p>New {unreads?.length}</p>
-            </div>
-          ) : null} */}
         </div>
         <div className="card--bottom">
           <div className="card--bottom__person">
@@ -297,4 +263,4 @@ const CardChannelStyled = styled.div`
   }
 `;
 
-export default CardChannel;
+export default CardChannelList;

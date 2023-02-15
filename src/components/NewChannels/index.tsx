@@ -30,12 +30,14 @@ function NewChannels({
   const isChecking = useSelector(({ channel }) => channel.isLoading);
   const error = useSelector(({ channel }) => channel?.isLoading.error);
 
-  let ids = new Set(joinedChannels.map(({ roomId }: any) => roomId));
+  let ids = new Set(joinedChannels.map((room: any) => room?.roomId));
   let idsChannels = new Set(
     availableChannels?.map(({ roomId }: any) => roomId)
   );
 
   const onCreateChannel = (data: any) => {
+    if (data?.room_name === '') return;
+    
     dispatch({ type: "CHANNELS_CREATE_INIT" });
     dispatch(createChannel(data, user.uid));
     setOpen(false);
@@ -93,7 +95,7 @@ function NewChannels({
           <div className="container-fluid">
             {availableChannels?.length > 0 &&
               availableChannels.map((channel: any, idx: number) => (
-                <div className="available mb-4">
+                <div className="available mb-4" key={`${channel?.room_name}-${idx}`}>
                   <CardChannel
                     channel={channel}
                     key={`${channel?.room_name}-${idx}`}
@@ -120,6 +122,7 @@ function NewChannels({
                 )
                 .map((channel: any, idx: number) => (
                   <div
+                  key={`${channel?.room_name}-${idx}`}
                     className="available mb-4"
                     onClick={() => setIsGoChannel("CREATE_CHANNEL")}
                   >

@@ -1,6 +1,8 @@
 import axiosClient from "api/axiosClient";
-import firebase from "firebase/app";
+import firebase from "firebase/compat/app";
+import "firebase/database";
 import db from "db/firestore";
+import "firebase/compat/firestore";
 
 export const getListChannel = (userId: string) => {
   const url = "/00040044";
@@ -16,17 +18,22 @@ export const getListChannel = (userId: string) => {
 const extractSnapshotData = (snapshot: any) =>
   snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
 
+export const fetchUnreads = () =>
+  db.firestore().collection("messagesunread").get().then(extractSnapshotData);
+
 export const fetchChannels = () =>
-  db.collection("channels").get().then(extractSnapshotData);
+  db.firestore().collection("channels").get().then(extractSnapshotData);
 
 export const createChannel = (channel: any) =>
   db
+    .firestore()
     .collection("channels")
     .add(channel)
     .then((docRef) => docRef.id);
 
 export const subscribeToChannel = (channelId: string, onSubsribe: any) =>
   db
+    .firestore()
     .collection("channels")
     .doc(channelId)
     .onSnapshot((snapshot) => {
@@ -36,13 +43,15 @@ export const subscribeToChannel = (channelId: string, onSubsribe: any) =>
 
 export const subscribeToProfile = (uid: string, onSubsribe: any) =>
   db
+    .firestore()
     .collection("profiles")
     .doc(uid)
     .onSnapshot((snapshot) => onSubsribe(snapshot.data()));
 
 export const joinChannel = async (userId: string, channelId: string) => {
-  const userRef = db.doc(`profiles/${userId}`);
-  const channelRef = db.doc(`channels/${channelId}`);
+  const userRef = db.firestore().doc(`profiles/${userId}`);
+  const channelRef = db.firestore().doc(`channels/${channelId}`);
+
   await userRef.update({
     joinedChannels: firebase.firestore.FieldValue.arrayUnion(channelRef),
   });
@@ -52,17 +61,46 @@ export const joinChannel = async (userId: string, channelId: string) => {
   });
 };
 
-export const sendChannelMessage = (message: any, channelId: any) =>
-  db
+export const sendChannelMessage = (message: any, channelId: any) => {
+  return db
+    .firestore()
     .collection("channels")
     .doc(channelId)
     .collection("messages")
     .doc(message.timestamp)
     .set(message);
+};
+
+export const updateUnreadMess = async (notifications: any) => {
+  notifications.forEach((no: any) => {
+    return db.firestore().collection("notifications").doc(no.id).set(no);
+  });
+};
+
+export const subscribeToChannelsJoined = (onSubsribe: any) =>
+  db
+    .firestore()
+    .collection("channels")
+    .onSnapshot((snapshot: any) => onSubsribe(snapshot.docChanges()));
 
 export const subscribeToMessages = (channelId: any, onSubsribe: any) =>
   db
+    .firestore()
     .collection("channels")
     .doc(channelId)
     .collection("messages")
     .onSnapshot((snapshot) => onSubsribe(snapshot.docChanges()));
+
+export const subscribeNotificationToMessages = (
+  channelId: any,
+  onSubsribe: any
+) =>
+  db
+    .firestore()
+    .collection("channels")
+    .doc(channelId)
+    .collection("messages")
+    .onSnapshot((snapshot) => onSubsribe(snapshot.docChanges(), snapshot));
+
+export const getNotifications = () =>
+  db.firestore().collection("notifications").get().then(extractSnapshotData);

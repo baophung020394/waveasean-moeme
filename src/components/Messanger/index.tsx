@@ -29,7 +29,6 @@ interface MessangerProps {
 }
 
 function Messanger({ onSubmit, channel }: MessangerProps) {
-  console.log(channel);
   const [value, setValue] = useState<any>("");
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const _messages = JSON.parse(localStorage.getItem("_messages"));

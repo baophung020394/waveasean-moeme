@@ -2,22 +2,22 @@ import axiosClient from "api/axiosClient";
 import { Auth } from "models/auth";
 import { removeUser, setUser } from "services/TokenService";
 import db from "db/firestore";
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
 // Create collection profiles
 const createUserProfile = (userProfile: any) =>
-  db.collection("profiles").doc(userProfile.uid).set(userProfile);
+  db.firestore().collection("profiles").doc(userProfile.uid).set(userProfile);
 
 const extractSnapshotData = (snapshot: any) =>
   snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
 
 export const fetchUsers = () =>
-  db.collection("profiles").get().then(extractSnapshotData);
+  db.firestore().collection("profiles").get().then(extractSnapshotData);
 
 export const getUserProfile = (uid: string) =>
   db
-    .collection("profiles")
+  .firestore().collection("profiles")
     .doc(uid)
     .get()
     .then((snapshot) => snapshot.data());

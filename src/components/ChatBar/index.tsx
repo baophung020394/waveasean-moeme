@@ -56,8 +56,7 @@ function ChatBar({ channel }: ChatBarProps) {
             </div>
             <div className="chat--bar__infor__groupname__bottom">
               <p className="user">
-                {channel?.owner_name}-{channel?.ownerId} -
-                {channel?.enableWriteMsg}
+                {channel?.owner_name}-{channel?.ownerId}
               </p>
             </div>
           </div>

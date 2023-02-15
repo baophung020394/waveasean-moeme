@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+import firebase from "firebase/compat/app";
 import "firebase/database";
 import db from "db/firestore";
 
@@ -8,7 +8,7 @@ const getOnlineStatus = (isOnline: any) => ({
 });
 
 export const setUserOnlineStatus = (uid: string, isOnline: any) => {
-  const userRef = db.doc(`/profiles/${uid}`);
+  const userRef = db.firestore().doc(`/profiles/${uid}`);
   const updateData = getOnlineStatus(isOnline);
   return userRef.update(updateData);
 };
