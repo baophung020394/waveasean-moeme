@@ -95,15 +95,6 @@ function createChannelReducer() {
     }
   };
 
-  const channelDetail = (state: initialState = null, action: any) => {
-    switch (action.type) {
-      case "CHOOSE_CHANNEL":
-        return action.channelDetail;
-      default:
-        return state;
-    }
-  };
-
   const messages = createReducer(
     {},
     {
@@ -157,7 +148,9 @@ function createChannelReducer() {
 
   const isLoading = (state: initialState = null, action: any) => {
     switch (action.type) {
+      case "CHANNELS_FETCH_INIT":
       case "CHANNELS_JOIN_INIT":
+      case "CHANNELS_CREATE_INIT":
       case "CHANNELS_CREATE_INIT":
         return {
           result: true,
@@ -165,6 +158,7 @@ function createChannelReducer() {
       case "CHANNELS_JOIN_FAIL":
       case "CHANNELS_CREATE_FAIL":
       case "CHANNELS_CREATE_SUCCESS":
+      case "CHANNELS_FETCH_SUCCESS":
         return {
           result: false,
           error: action?.error || {},

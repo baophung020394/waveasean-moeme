@@ -13,20 +13,25 @@ interface ChatMessageListProps {
 function ChatMessageList({ messages = [] }: ChatMessageListProps) {
   // const user = JSON.parse(localStorage.getItem("_profile"));
   const user = useSelector(({ auth }) => auth.user);
-  const messagesRef = useRef<any>({});
+  let messagesRef: any = useRef<any>();
 
   const isAuthorOf = useCallback(
     (message: any) => {
-      return message?.author?.uid === user?.uid ? "chat-right" : "chat-left";
+      return message?.author?.id === user?.uid ? "chat-right" : "chat-left";
+      // return message?.author?.uid === user?.uid ? "chat-right" : "chat-left";
     },
     [messages]
   );
 
+  const imageLoaded = () => {
+    messagesRef.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
-    if (messages && messages?.length > 0 && messagesRef) {
-      messagesRef?.current?.scrollIntoView(false);
-    }
-  }, [messages?.length, messagesRef]);
+    // if (messages?.length > 0) {
+    messagesRef?.scrollIntoView({ behavior: "smooth" });
+    // }
+  }, [messages]);
 
   return (
     <ChatMessageListStyled className="chat--container">
@@ -63,7 +68,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
               </li>
             );
           } else if (
-            message?.files &&
+            message?.image &&
             ["image/jpeg", "image/png"].includes(message?.fileType)
           ) {
             return (
@@ -93,8 +98,9 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                 <div className="chat-text-wrapper">
                   <img
                     className="image-chat"
-                    src={JSON.parse(message?.files)}
+                    src={message.image}
                     alt="Thumb"
+                    onLoad={imageLoaded}
                   />
                 </div>
               </li>
@@ -179,58 +185,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
             );
           }
         })}
-
-        {/* 
-       
-        
-        <li className="chat-right chat-image">
-          <div className="chat-avatar">
-            <img
-              src="http://file.hstatic.net/1000159991/file/doremon-min_d7fba7f7f60a41a0af6e67dcaeb75634_grande.jpg"
-              alt="Retail Admin"
-              className="icon40 avatar"
-            />
-            <div className="chat-name">
-              User 1 <div className="chat-hour">2:30</div>
-            </div>
-          </div>
-          <div className="chat-text-wrapper">
-            <img
-              src="http://cdn.tgdd.vn/Files/2020/09/03/1286576/top-26-tap-phim-hoat-hinh-doremon-dai-hay-nhat-cho-be-202206071148483160.jpg"
-              alt=""
-            />
-            <span className="chat-text">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Repellendus dolorum sint vitae tenetur commodi animi itaque beatae
-              blanditiis quis a officiis minima quidem voluptatem, nisi
-              exercitationem explicabo laudantium laboriosam assumenda.
-            </span>
-            <span className="chat-spacer">
-              <span className="chat-href">www.etnews.com</span>
-            </span>
-          </div>
-        </li> 
-        <li className="chat-left">
-          <div className="chat-avatar">
-            <img
-              src="http://file.hstatic.net/1000159991/file/doremon-min_d7fba7f7f60a41a0af6e67dcaeb75634_grande.jpg"
-              alt="Retail Admin"
-              className="icon40 avatar"
-            />
-            <div className="chat-name">
-              User 2 <div className="chat-hour">2:30</div>
-            </div>
-          </div>
-          <div className="chat-text-wrapper">
-            <span className="chat-text">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Repellendus dolorum sint vitae tenetur commodi animi itaque beatae
-              blanditiis quis a officiis minima quidem voluptatem, nisi
-              exercitationem explicabo laudantium laboriosam assumenda.
-            </span>
-            <span className="chat-spacer"></span>
-          </div>
-        </li> */}
+        <div ref={(currentEl) => (messagesRef = currentEl)}></div>
       </ul>
     </ChatMessageListStyled>
   );
@@ -258,7 +213,7 @@ const ChatMessageListStyled = styled.div`
       }
     }
   }
-  
+
   li.chat-right,
   li.chat-left {
     display: flex;

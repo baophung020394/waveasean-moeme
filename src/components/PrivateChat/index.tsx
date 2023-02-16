@@ -22,67 +22,25 @@ import ChannelList from "components/ChannelList";
 import { withBaseLayout } from "layouts/Base";
 import firebase from "db/firestore";
 
-interface ChatProps {}
+interface PrivateChatProps {
+  user: any;
+}
 
-function Chat({}: ChatProps) {
-  const { id }: any = useParams();
+function PrivateChat({ user }: PrivateChatProps) {
   const dispatch: any = useDispatch();
-  const peopleWatchers: any = useRef({});
-  const activeChannel = useSelector(
-    ({ channel }) => channel.activeChannels[id]
-  );
-  const joinedChannels = useSelector(({ channel }) => channel.joined);
-  const messages = useSelector(({ channel }) => channel.messages[id]);
-  const messageSubs = useSelector(({ channel }) => channel.messageSubs[id]);
-  const joinedUsers = activeChannel?.joinedUsers;
-
+  const currentChannel = useSelector(({ channel }) => channel.currentChannel);
   const storageRef = firebase.storage().ref();
   const messageRef = firebase.database().ref("messages");
   const [messagesState, setMessagesState] = useState([]);
   const [searchTermState, setSearchTermState] = useState("");
-  const currentChannel = useSelector(({ channel }) => channel?.currentChannel);
-  // useEffect(() => {
-  //   const unsubFromChannel = dispatch(subscribeToChannel(id));
 
-  //   if (!messageSubs) {
-  //     const unsubFromMessages = dispatch(subscribeToMessages(id));
-  //     dispatch(registerMessageSubscription(id, unsubFromMessages));
-  //   }
-
-  //   return () => {
-  //     unsubFromChannel();
-  //     unsubFromJoinedUsers();
-  //   };
-  // }, [id]);
-
-  // useEffect(() => {
-  //   joinedUsers && subscribeToJoinedUsers(joinedUsers);
-  // }, [joinedUsers]);
-
-  // const subscribeToJoinedUsers = useCallback(
-  //   (JUsers) => {
-  //     JUsers.forEach((user: any) => {
-  //       if (!peopleWatchers.current[user.uid]) {
-  //         peopleWatchers.current[user.uid] = dispatch(
-  //           subscribeToProfile(user.uid, id)
-  //         );
-  //       }
-  //     });
-  //   },
-  //   [dispatch, id]
-  // );
-
-  // const unsubFromJoinedUsers = useCallback(() => {
-  //   Object.keys(peopleWatchers.current).forEach((id) =>
-  //     peopleWatchers.current[id]()
-  //   );
-  // }, [peopleWatchers.current]);
-
+  console.log({ user });
   const sendMessage = useCallback(
     (message) => {
-      dispatch(sendChannelMessage2(message, id));
+      console.log({ message });
+      dispatch(sendChannelMessage2(message, user?.id));
     },
-    [id]
+    [user?.id]
   );
 
   const uploadImage = (data: any) => {
@@ -94,16 +52,16 @@ function Chat({}: ChatProps) {
       .then((data) => {
         data.ref.getDownloadURL().then((url: string) => {
           newData.image = url;
-          dispatch(sendChannelMessage2(newData, id));
+          dispatch(sendChannelMessage2(newData, user?.id));
         });
       })
       .catch((err) => console.log("err", err));
   };
 
   useEffect(() => {
-    if (id) {
+    if (user?.id) {
       setMessagesState([]);
-      messageRef.child(id).on("child_added", (snap) => {
+      messageRef.child(user?.id).on("child_added", (snap) => {
         setMessagesState((currentState: any) => {
           let updateState = [...currentState];
           updateState.push(snap.val());
@@ -111,9 +69,9 @@ function Chat({}: ChatProps) {
         });
       });
 
-      return () => messageRef.child(id).off();
+      return () => messageRef.child(user?.id).off();
     }
-  }, [id]);
+  }, [user?.id]);
 
   const uniqueuUsersCount = () => {
     const uniqueuUsers = messagesState.reduce((acc, message) => {
@@ -140,32 +98,19 @@ function Chat({}: ChatProps) {
           .toLowerCase()
           .includes(searchTermState.toLowerCase())
     );
-    // const messages = messagesState.reduce((acc, message) => {
-    //   console.log("messsge reduce", message);
-    //   if (
-    //     (message.content && message.content?.match(regex)) ||
-    //     message.author.username?.match(regex)
-    //   ) {
-    //     acc.push(message);
-    //   }
-    //   return acc;
-    // }, []);
 
     return messages;
   };
 
-  // if (!activeChannel?.id) {
-  //   return <LoadingView message="Loading Chat..." />;
-  // }
+  //   if (!activeChannel?.id) {
+  //     return <LoadingView message="Loading Chat..." />;
+  //   }
 
   return (
     <ChatStyled className="chat--view">
-      <div className="chat--view__channels">
-        <ChannelList joinedChannels={joinedChannels} />
-      </div>
       <div className="chat--view__content">
         <ChatBar
-          channel={currentChannel}
+          channel={user}
           uniqueuUsers={uniqueuUsersCount()}
           searchTermChange={searchTermChange}
         />
@@ -175,14 +120,14 @@ function Chat({}: ChatProps) {
               searchTermState ? filterMessageBySearchTerm() : messagesState
             }
           />
-          <div className="chat--view__content__options">
+          {/* <div className="chat--view__content__options">
             {activeChannel?.enableWriteMsg === "1" && (
               <ChatOptions submitStock={sendMessage} />
             )}
-          </div>
+          </div> */}
           <Messanger
             onSubmit={sendMessage}
-            channel={activeChannel}
+            channel={currentChannel}
             uploadImage={uploadImage}
           />
         </div>
@@ -198,11 +143,6 @@ const ChatStyled = styled.div`
   flex-direction: row;
 
   .chat--view {
-    &__channels {
-      min-width: 420px;
-      border-right: 1px solid #e6ecf3;
-    }
-
     &__content {
       height: 100%;
       width: 100%;
@@ -221,4 +161,4 @@ const ChatStyled = styled.div`
   }
 `;
 
-export default withBaseLayout(Chat);
+export default PrivateChat;

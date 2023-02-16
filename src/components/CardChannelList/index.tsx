@@ -3,32 +3,33 @@ import ORGIcon from "assets/images/icon/ORG.png";
 import PERIcon from "assets/images/icon/PER.png";
 import SPLIcon from "assets/images/icon/SPL.png";
 import STOIcon from "assets/images/icon/STO.png";
+import { Notification } from "components/Notifications";
 import { currencyFormat } from "hooks/useFormatNumber";
 import { Channel } from "models/channel";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import firebase from "db/firestore";
+import { createTimestamp } from "utils/time";
 
 interface CardChannelListProps {
   channel: Channel;
   onClick?: (data: any) => void;
   setChannel: (channel: any) => void;
-  // getNotificationCount?: any;
-  notifications: any;
-  setLastVisited: any;
 }
 
 function CardChannelList({
   channel,
   onClick,
   setChannel,
-  notifications,
-  setLastVisited,
 }: CardChannelListProps) {
   const dispatch: any = useDispatch();
   const history = useHistory();
   const user = useSelector(({ auth }) => auth.user);
+  const currentChannel = useSelector(({ channel }) => channel.currentChannel);
+  const usersRef = firebase.database().ref("users");
+
   const renderChannelType = (channelType: string) => {
     switch (channelType) {
       case "STO":
@@ -74,27 +75,36 @@ function CardChannelList({
 
   const onChooseChannel = async (channel: any) => {
     setChannel(channel);
-    dispatch(setCurrentChannel(channel));
-    dispatch(clearNotifications(notifications, channel?.id));
-    setLastVisited(user, channel?.id);
+    if (currentChannel) {
+      setLastVisited(user, currentChannel);
+      setLastVisited(user, channel);
+      dispatch(setCurrentChannel(channel));
+    }
+    // dispatch(clearNotifications(notifications, channel?.id));
+    // setLastVisited(user, channel?.id);
     history.push(`/channel-detail/${channel?.id}`);
   };
 
-  const getNotificationCount = (channel: any) => {
-    let count = 0;
-
-    notifications?.forEach((notification: any) => {
-      if (notification.id === channel.id) {
-        count = notification.count;
-      }
-    });
-
-    if (count > 0) {
-      console.log("count > 0", count);
-      return count;
-    }
-    // dispatch(setNotification(notifications));
+  const setLastVisited = (user: any, channel: any) => {
+    const lastVisited = usersRef
+      .child(user.uid)
+      .child("lastVisited")
+      .child(channel.id);
+    lastVisited.set(createTimestamp());
+    lastVisited.onDisconnect().set(createTimestamp());
   };
+
+  //   const selectChannel = (channel) => {
+  //     setLastVisited(props.user,props.channel);
+  //     setLastVisited(props.user,channel);
+  //     props.selectChannel(channel);
+  // }
+
+  // const setLastVisited = (user, channel) => {
+  //     const lastVisited = usersRef.child(user.uid).child("lastVisited").child(channel.id);
+  //     lastVisited.set(firebase.database.ServerValue.TIMESTAMP);
+  //     lastVisited.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+  // }
 
   return (
     <CardChannelStyled>
@@ -102,6 +112,7 @@ function CardChannelList({
         className="card"
         onClick={() => {
           onChooseChannel(channel);
+          // selectChannel(channel);
         }}
         key={`${channel?.room_name}-${channel?.id}`}
       >
@@ -132,11 +143,21 @@ function CardChannelList({
               {renderChannelType(channel?.chnl_type)}
             </div>
           </div>
-          {getNotificationCount(channel) && (
+          {/* {getNotificationCount(channel) && (
             <div className="card--top__notify">
               <p>New - {getNotificationCount(channel)}</p>
             </div>
-          )}
+          )} */}
+
+          <Notification
+            userProps={user}
+            channel={currentChannel}
+            notificationChannelId={channel.id}
+            displayName={"# " + channel.name}
+          />
+          {/* <Notification user={props.user} channel={props.channel}
+                        notificationChannelId={channel.id}
+                        displayName= {"# " + channel.name} /> */}
         </div>
         <div className="card--bottom">
           <div className="card--bottom__person">
@@ -197,6 +218,20 @@ const CardChannelStyled = styled.div`
           padding: 1px 4px;
         }
       }
+
+      p.notitext {
+        order: 0;
+        background: red;
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 20px;
+        border-radius: 8px;
+        margin-right: 8px;
+      }
+
       &__infor {
         display: flex;
 
@@ -207,6 +242,7 @@ const CardChannelStyled = styled.div`
           // object-fit: cover;
           // margin-right: 6px;
         }
+
         .infor {
           h3 {
             font-size: 16px;

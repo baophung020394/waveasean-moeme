@@ -104,3 +104,26 @@ export const subscribeNotificationToMessages = (
 
 export const getNotifications = () =>
   db.firestore().collection("notifications").get().then(extractSnapshotData);
+
+/** TEST new structure */
+
+export const createChannel2 = (createChannel: any, user: any) => {
+  const channelRef = db.database().ref("channels");
+  const key = channelRef.push().key;
+
+  let newChannel = { ...createChannel };
+
+  newChannel.id = key;
+  return channelRef.child(key).update(newChannel);
+};
+
+export const sendChannelMessage2 = (message: any, channelId: any) => {
+  return db.database().ref("messages").child(channelId).push().set(message);
+  // return db
+  //   .firestore()
+  //   .collection("channels")
+  //   .doc(channelId)
+  //   .collection("messages")
+  //   .doc(message.timestamp)
+  //   .set(message);
+};

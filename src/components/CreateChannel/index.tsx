@@ -30,7 +30,7 @@ function CreateChannel({
   let myuuid = uuidv4();
 
   const onSubmit = (data: any) => {
-    data.user = user;
+    // data.user = user;
     data.ownerId = user.uid;
     data.owner_name = user.userId;
     data.room_type = "2";

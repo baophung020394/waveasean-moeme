@@ -22,19 +22,21 @@ import { fetchURL } from "utils/converURLToContent";
 import html2canvas from "html2canvas";
 import * as htmlToImage from "html-to-image";
 import { createTimestamp } from "utils/time";
+import { useSelector } from "react-redux";
 
 interface MessangerProps {
   channel: any;
   onSubmit: (message: any) => void;
+  uploadImage?: (data: any) => void;
 }
 
-function Messanger({ onSubmit, channel }: MessangerProps) {
+function Messanger({ onSubmit, channel, uploadImage }: MessangerProps) {
   const [value, setValue] = useState<any>("");
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const _messages = JSON.parse(localStorage.getItem("_messages"));
   const textareaRef = useRef<any>(null);
   const user = JSON.parse(localStorage.getItem("_profile"));
-
+  const userRedux = useSelector(({ auth }) => auth.user);
   let myuuid = uuidv4();
 
   /**
@@ -58,22 +60,37 @@ function Messanger({ onSubmit, channel }: MessangerProps) {
     if (e.target.files && e.target.files.length > 0) {
       const image = e.target.files[0];
 
-      const reader = new FileReader();
-
-      reader.readAsDataURL(image);
-
-      reader.onload = () => {
-        let newMessage = {
-          content: `${e.target.files[0].type}`,
-          files: JSON.stringify(reader?.result),
-          idMessage: myuuid,
-          user,
-          timestamp: createTimestamp(),
-          fileType: e.target.files[0].type,
-        };
-
-        onSubmit(newMessage);
+      const metadata = {
+        type: image.type,
       };
+
+      console.log({ image });
+      let newMessage = {
+        content: ``,
+        files: image,
+        idMessage: myuuid,
+        user,
+        timestamp: createTimestamp(),
+        fileType: metadata.type,
+        metadata,
+      };
+      uploadImage(newMessage);
+      // const reader = new FileReader();
+
+      // reader.readAsDataURL(image);
+
+      // reader.onload = () => {
+      // let newMessage = {
+      //   content: `${e.target.files[0].type}`,
+      //   files: JSON.stringify(reader?.result),
+      //   idMessage: myuuid,
+      //   user,
+      //   timestamp: createTimestamp(),
+      //   fileType: e.target.files[0].type,
+      // };
+
+      //   onSubmit(newMessage);
+      // };
     }
   };
 
@@ -88,46 +105,6 @@ function Messanger({ onSubmit, channel }: MessangerProps) {
       setValue("");
     }
   };
-
-  // const URLtoFile = async (url: string) => {
-  //   const res = await fetch(url);
-  //   const blob = await res.blob();
-  //   // Gets URL data and read to blob
-
-  //   const mime = blob.type;
-  //   const ext = mime.slice(mime.lastIndexOf("/") + 1, mime.length);
-  //   // Gets blob MIME type (e.g. image/png) and extracts extension
-
-  //   const file: any = new File([blob], `filename.${ext}`, {
-  //     type: "image/jpeg",
-  //   });
-  //   // Creates new File object using blob data, extension and MIME type
-
-  //   const reader = new FileReader();
-
-  //   console.log(file)
-  //   reader.readAsDataURL(file);
-
-  //   reader.onload = () => {
-  //     let newMessage = {
-  //       content: "image",
-  //       images: JSON.stringify(reader?.result),
-  //       idMessage: myuuid,
-  //       user,
-  //     };
-
-  //     const prevMessage = _messages || [];
-  //     const newMessages = [...prevMessage, { ...newMessage }];
-
-  //     localStorage.setItem("_messages", JSON.stringify(newMessages));
-
-  //     html2canvas(file).then((canvas) => {
-  //       document.body.appendChild(canvas);
-  //     });
-  //   };
-
-  //   // console.log(file);
-  // };
 
   /**
    * Submit form data

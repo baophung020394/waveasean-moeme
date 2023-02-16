@@ -19,6 +19,8 @@ import StoreProvider from "store/StoreProvider";
 import styled from "styled-components";
 import Header from "./components/common/Header";
 import { listenToAuthChanges } from "actions/auth";
+import PrivateView from "layouts/Private";
+import PrivateChat from "components/PrivateChat";
 
 export const AuthRoute = ({ children, ...rest }: any) => {
   const user = useSelector(({ auth }) => auth.user);
@@ -93,6 +95,12 @@ function MoeMe() {
           </AuthRoute>
           <AuthRoute path="/channel-detail/:id">
             <ChatView />
+          </AuthRoute>
+          <AuthRoute path="/private">
+            <PrivateView />
+          </AuthRoute>
+          <AuthRoute path="/private-detail/:id">
+            <PrivateChat />
           </AuthRoute>
           <AuthRoute path="/profile">
             <ProfileView />

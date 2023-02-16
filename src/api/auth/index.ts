@@ -17,7 +17,8 @@ export const fetchUsers = () =>
 
 export const getUserProfile = (uid: string) =>
   db
-  .firestore().collection("profiles")
+    .firestore()
+    .collection("profiles")
     .doc(uid)
     .get()
     .then((snapshot) => snapshot.data());
@@ -67,7 +68,8 @@ export const login = async ({ userId, userPassword }: Auth) => {
   };
 
   await createUserProfile(userProfileRegister);
-
+  await createUser(userProfileRegister);
+  
   const loginFireBaseRes = await loginFirebase(dataFirebase);
   return loginFireBaseRes;
 };
@@ -93,4 +95,15 @@ export const logout = () => {
 
 export const onAuthStateChanges = (onAuth: any) => {
   return firebase.auth().onAuthStateChanged(onAuth);
+};
+
+/** Test auth 2 */
+export const createUser = (userProfileRegister: any) => {
+  return db
+    .database()
+    .ref("users")
+    .child(userProfileRegister.uid)
+    .set(userProfileRegister)
+    .then(() => console.log("saved user"))
+    .catch((err) => console.log("err", err));
 };

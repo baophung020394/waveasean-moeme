@@ -26,7 +26,7 @@ function Navbar() {
           </Link>
         </li>
         <li>
-          <Link to="/home">
+          <Link to="/private">
             <img src={Chat1} alt="" />
           </Link>
         </li>

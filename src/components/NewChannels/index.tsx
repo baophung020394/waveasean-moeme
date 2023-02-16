@@ -1,4 +1,4 @@
-import { createChannel, getChannelList, joinChannel } from "actions/channel";
+import { createChannel, createChannel2, getChannelList, joinChannel } from "actions/channel";
 import CardChannel from "components/CardChannel";
 import CustomModal from "components/CustomModal";
 import React, { useEffect, useState } from "react";
@@ -38,14 +38,14 @@ function NewChannels({
   const onCreateChannel = (data: any) => {
     if (data?.room_name === '') return;
     
-    dispatch({ type: "CHANNELS_CREATE_INIT" });
-    dispatch(createChannel(data, user.uid));
+    // dispatch({ type: "CHANNELS_CREATE_INIT" });
+    dispatch(createChannel2(data));
     setOpen(false);
   };
 
-  if (isChecking?.result) {
-    return <LoadingView message="Creating channel..." />;
-  }
+  // if (isChecking?.result) {
+  //   return <LoadingView message="Creating channel..." />;
+  // }
 
   return (
     <AvailableChatsStyled>

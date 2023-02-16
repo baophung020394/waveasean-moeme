@@ -97,37 +97,39 @@ export const subscribeToProfile =
 export const createChannel =
   (formData: any, userId: any) => async (dispatch: any) => {
     const newChannel = { ...formData };
-    let fetchChnls = await api.fetchChannels();
-    let ids = new Set(fetchChnls.map((room: any) => room?.roomId));
+    console.log({ formData });
+    return dispatch(createChannel2(newChannel));
+    // let fetchChnls = await api.fetchChannels();
+    // let ids = new Set(fetchChnls.map((room: any) => room?.roomId));
 
-    fetchChnls = fetchChnls.filter(
-      (room: any) => room?.roomId === newChannel?.roomId
-    );
+    // fetchChnls = fetchChnls.filter(
+    //   (room: any) => room?.roomId === newChannel?.roomId
+    // );
 
-    if (fetchChnls?.length > 0) {
-      const error = {
-        type: "error",
-        message: "The channel is duplicate, please refresh page!",
-      };
-      dispatch({
-        type: "CHANNELS_CREATE_FAIL",
-        error,
-      });
-    } else {
-      newChannel.admin = db.firestore().doc(`profiles/${userId}`);
-      // const newChannel = { ...channel };
-      // const { user } = getState().auth;
-      // const userRef = db.doc(`profiles/${user.uid}`);
-      // newChannel.author = userRef;
-      const channelId = await api.createChannel(newChannel);
-      dispatch({ type: "CHANNELS_CREATE_SUCCESS" });
-      await api.joinChannel(userId, channelId);
-      dispatch({
-        type: "CHANNELS_JOIN_SUCCESS",
-        channel: { ...newChannel, id: channelId },
-      });
-      return channelId;
-    }
+    // if (fetchChnls?.length > 0) {
+    //   const error = {
+    //     type: "error",
+    //     message: "The channel is duplicate, please refresh page!",
+    //   };
+    //   dispatch({
+    //     type: "CHANNELS_CREATE_FAIL",
+    //     error,
+    //   });
+    // } else {
+    // newChannel.admin = db.firestore().doc(`profiles/${userId}`);
+    // const channelId = await api.createChannel(newChannel);
+    // dispatch({ type: "CHANNELS_CREATE_SUCCESS" });
+    // await api.joinChannel(userId, channelId);
+    // dispatch({
+    //   type: "CHANNELS_JOIN_SUCCESS",
+    //   channel: { ...newChannel, id: channelId },
+    // });
+
+    /** Test create channel new structure */
+    // await dispatch(createChannel2(newChannel));
+
+    // return channelId;
+    // }
   };
 
 export const sendChannelMessage =
@@ -139,6 +141,8 @@ export const sendChannelMessage =
     const userRef = db.firestore().doc(`profiles/${user.uid}`);
     newMessage.author = userRef;
     newMessage.channelId = channelId;
+
+    // dispatch(sendChannelMessage2(newMessage, channelId));
 
     return api
       .sendChannelMessage(newMessage, channelId)
@@ -217,7 +221,7 @@ export const subscribeNotificationToMessages =
           }
         });
         // console.log("updateNotifications 2", notificationsChnl);
-        return dispatch(updateUnreadMess(notificationsChnl));
+        // return dispatch(updateUnreadMess(notificationsChnl));
       }
     );
   };
@@ -238,7 +242,7 @@ export const clearNotifications =
       let updateNotifications = [...notifications];
       updateNotifications[index].total = notifications[index].lastKnownTotal;
       updateNotifications[index].count = 0;
-      dispatch(updateUnreadMess(updateNotifications));
+      // dispatch(updateUnreadMess(updateNotifications));
     }
   };
 export const registerMessageSubscription = (
@@ -265,3 +269,41 @@ export const getNotifications =
       console.log({ notifications });
       return dispatch({ type: "GET_LIST_NOTIFICATION", notifications });
     });
+
+/** TEST new structure */
+
+export const createChannel2 =
+  (newChannel: any) => (dispatch: any, getState: any) => {
+    let cloneChannel = { ...newChannel };
+    console.log("vo create channel", cloneChannel);
+    // delete cloneChannel.id;
+    // delete cloneChannel.admin;
+
+    const { user } = getState().auth;
+    cloneChannel.createdBy = {
+      name: user?.userId,
+    };
+
+    return api
+      .createChannel2(cloneChannel, user)
+      .then(() => console.log("save success"))
+      .catch((err) => console.log("err", err));
+  };
+
+export const sendChannelMessage2 =
+  (message: any, channelId: string) => (dispatch: any, getState: any) => {
+    const newMessage = { ...message };
+    const { user } = getState().auth;
+    delete newMessage.author;
+
+    newMessage.channelId = channelId;
+    newMessage.author = {
+      username: user?.userId,
+      id: user?.uid,
+    };
+
+    return api
+      .sendChannelMessage2(newMessage, channelId)
+      .then(() => console.log("save mess success"))
+      .catch((err) => console.log("err", err));
+  };

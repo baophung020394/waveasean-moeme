@@ -1,63 +1,102 @@
 import { currencyFormat } from "hooks/useFormatNumber";
 import { Channel } from "models/channel";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import IconStockTop from "assets/images/chat/stock-top.png";
 import IconSearch from "assets/images/chat/search.png";
 import IconMoreMenu from "assets/images/chat/moremenu.png";
+import { formatTimeAgo } from "utils/time";
 
 interface ChatBarProps {
   channel?: any;
+  uniqueuUsers: any;
+  searchTermChange?: (e: any) => void;
 }
 
-function ChatBar({ channel }: ChatBarProps) {
-  // const channelDetail = useSelector(({ channel }) => channel.channelDetail);
+function ChatBar({ channel, uniqueuUsers, searchTermChange }: ChatBarProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isOpenInput, setIsOpenInput] = useState(false);
+  const user = useSelector(({ auth }) => auth.user);
+
+  // console.log("formatTimeAgo", formatTimeAgo(channel.lastVisited["LuAM8ylFxJScsVlFHudzrTzFB4j2NHl2TNukq6e6E2ESYUKEKxKPhim2"]));
+  const onChangeSearchTerm = (e: any) => {
+    const target = e.target;
+    searchTermChange(target.value);
+  };
 
   return (
     <ChatBarStyled className="chat--bars">
       <div className="chat--bar">
         <div className="chat--bar__infor">
-          {channel?.room_profile_image ? (
+          {!channel?.isPrivateChat &&
+            (channel?.room_profile_image ? (
+              <object
+                className="icon40 avatar"
+                data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=7&serverfile=thumb_${channel.room_profile_image}`}
+                type="image/png"
+              >
+                {channel?.device === "web" ? (
+                  <img
+                    className="image-chat"
+                    src={JSON.parse(channel?.room_profile_image)}
+                    alt="Thumb"
+                  />
+                ) : (
+                  <img
+                    src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
+                    alt="avatar"
+                    className="icon40 avatar"
+                  />
+                )}
+              </object>
+            ) : (
+              <img
+                src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
+                alt="avatar"
+                className="icon40 avatar"
+              />
+            ))}
+
+          {channel?.isPrivateChat && (
             <object
               className="icon40 avatar"
-              data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=7&serverfile=thumb_${channel.room_profile_image}`}
+              data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${channel?.userId}`}
               type="image/png"
             >
-              {channel?.device === "web" ? (
-                <img
-                  className="image-chat"
-                  src={JSON.parse(channel?.room_profile_image)}
-                  alt="Thumb"
-                />
-              ) : (
-                <img
-                  src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
-                  alt="avatar"
-                  className="icon40 avatar"
-                />
-              )}
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/147/147144.png"
+                alt="avatar"
+                className="icon40 avatar"
+              />
             </object>
-          ) : (
-            <img
-              src="http://www2.aveapp.com/wp-content/uploads/2021/05/w2560.jpg"
-              alt="avatar"
-              className="icon40 avatar"
-            />
           )}
 
           <div className="chat--bar__infor__groupname">
             <div className="chat--bar__infor__groupname__top">
-              <h4>{channel?.room_name}</h4>
+              <h4>
+                {channel?.isPrivateChat ? channel?.userId : channel?.room_name}
+              </h4>
               <span className="marks"></span>
               <span className="number">
-                {currencyFormat(Number(channel?.userCount))}
+                {channel?.isPrivateChat
+                  ? null
+                  : currencyFormat(Number(channel?.userCount))}
               </span>
             </div>
             <div className="chat--bar__infor__groupname__bottom">
-              <p className="user">
-                {channel?.owner_name}-{channel?.ownerId}
-              </p>
+              {channel?.isPrivateChat ? (
+                <p className="user">Online at:</p>
+              ) : (
+                <>
+                  <p className="user">
+                    {channel?.owner_name}-{channel?.ownerId}
+                  </p>
+                  <p className="user">
+                    {uniqueuUsers} User{uniqueuUsers <= 1 ? "" : "s"}
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -66,10 +105,22 @@ function ChatBar({ channel }: ChatBarProps) {
             <img className="icon24 img-show" src={IconStockTop} alt="" />
             <img className="icon24 img-hover" src={IconStockTop} alt="" />
           </button>
-          <button className="btn-hover">
-            <img className="icon24 img-show" src={IconSearch} alt="" />
-            <img className="icon24 img-hover" src={IconSearch} alt="" />
-          </button>
+          <div className="search-option">
+            <button
+              className="btn-hover"
+              onClick={() => setIsOpenInput(!isOpenInput)}
+            >
+              <img className="icon24 img-show" src={IconSearch} alt="" />
+              <img className="icon24 img-hover" src={IconSearch} alt="" />
+            </button>
+            {isOpenInput && (
+              <input
+                type="text"
+                onChange={onChangeSearchTerm}
+                className="search-term"
+              />
+            )}
+          </div>
           <button className="btn-hover">
             <img
               className="icon24 img-show"
@@ -114,6 +165,10 @@ const ChatBarStyled = styled.div`
         &:last-child {
           margin-right: 0;
         }
+      }
+
+      .search-option {
+        display: inline-block;
       }
     }
 

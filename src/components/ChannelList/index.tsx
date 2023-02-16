@@ -7,9 +7,6 @@ import {
   registerMessageSubscription,
   getNotifications,
 } from "actions/channel";
-import { registerChannelsJoinedSubscription } from "actions/channel";
-import { subscribeToChannel, updateUnreadMess } from "actions/channel";
-import CardChannel from "components/CardChannel";
 import LoadingView from "components/Spinner/LoadingView";
 import Title from "components/Title";
 import { Channel } from "models/channel";
@@ -23,6 +20,7 @@ import { createTimestamp } from "utils/time";
 import "firebase/compat/firestore";
 import firebase from "firebase/compat/app";
 import "firebase/database";
+import { Notification } from "components/Notifications";
 
 interface ChannelListProps {
   joinedChannels: any;
@@ -34,10 +32,14 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
   const dispatch: any = useDispatch();
   const isChecking = useSelector(({ channel }) => channel.isChecking);
   const user = useSelector(({ auth }) => auth.user);
+  const currentChannel = useSelector(({ channel }) => channel.currentChannel);
+
   const notificationsChnl = useSelector(({ channel }) => channel.notifications);
   const messageSubsNotifications = useSelector(
     ({ channel }) => channel.messageSubsNotifications
   );
+
+  const [channelsState, setChannelsState] = useState([]);
 
   const setFirstChannel = () => {
     const firstChannel = joinedChannels[0];
@@ -48,67 +50,61 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
     setFirstLoad(false);
   };
 
-  const setLastVisited = async (user: any, channel: any) => {
-    console.log({ user });
-    const lastVisited = db
-      .firestore()
-      .collection("profiles")
-      .doc(user.uid)
-      .collection("lastVisited")
-      .doc(channel?.id);
-    // .collection("joinedChannels")
-    // .doc(channel?.id);
-
-    lastVisited.set({
-      lastVisited: firebase.firestore.FieldValue.arrayUnion(
-        Timestamp.now().toMillis().toString()
-      ),
-    });
-    // await lastVisited.update({
-    //   `${channel?.id}`: firebase.firestore.FieldValue.arrayUnion(
-    //     Timestamp.now().toMillis().toString()
-    //   ),
-    // });
-  };
+  const channelsRef = firebase.database().ref("channels");
 
   useEffect(() => {
-    dispatch(fetchUnreads());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(getNotifications());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (joinedChannels.length > 0) {
-      setFirstChannel();
-
-      joinedChannels.forEach((chnl: any) => {
-        const unsubFromChannel = dispatch(
-          subscribeNotificationToMessages(
-            chnl?.id,
-            channel?.id,
-            notificationsChnl
-          )
-        );
-
-        if (!messageSubsNotifications) {
-          const unsubFromMessages = dispatch(
-            subscribeNotificationToMessages(
-              chnl?.id,
-              channel?.id,
-              notificationsChnl
-            )
-          );
-          dispatch(registerMessageSubscription(chnl?.id, unsubFromMessages));
-        }
-
-        return () => {
-          unsubFromChannel();
-        };
+    channelsRef.on("child_added", (snap) => {
+      setChannelsState((currentState) => {
+        let updatedState = [...currentState];
+        updatedState.push(snap.val());
+        return updatedState;
       });
+    });
+
+    return () => channelsRef.off();
+  }, []);
+
+  useEffect(() => {
+    if (channelsState.length > 0) {
+      dispatch(setCurrentChannel(channelsState[0]));
     }
-  }, [joinedChannels, channel?.id]);
+  }, [!currentChannel ? channelsState : null]);
+
+  // useEffect(() => {
+  //   if (joinedChannels.length > 0) {
+  //     setFirstChannel();
+  //     const firstChannel = joinedChannels[0];
+  //     if (firstLoad && joinedChannels.length > 0) {
+  //       setChannel(firstChannel);
+  //       dispatch(setCurrentChannel(firstChannel));
+  //     }
+  //     setFirstLoad(false);
+  //   //   joinedChannels.forEach((chnl: any) => {
+  //   //     const unsubFromChannel = dispatch(
+  //   //       subscribeNotificationToMessages(
+  //   //         chnl?.id,
+  //   //         channel?.id,
+  //   //         notificationsChnl
+  //   //       )
+  //   //     );
+
+  //   //     if (!messageSubsNotifications) {
+  //   //       const unsubFromMessages = dispatch(
+  //   //         subscribeNotificationToMessages(
+  //   //           chnl?.id,
+  //   //           channel?.id,
+  //   //           notificationsChnl
+  //   //         )
+  //   //       );
+  //   //       dispatch(registerMessageSubscription(chnl?.id, unsubFromMessages));
+  //   //     }
+
+  //   //     return () => {
+  //   //       unsubFromChannel();
+  //   //     };
+  //   //   });
+  //   }
+  // }, [joinedChannels, channel?.id]);
 
   if (isChecking) {
     return <LoadingView message="Load channels...." />;
@@ -118,18 +114,14 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
     <ChannelListStyled className="channel-list">
       <Title name="Channels joined" />
       <div className="card--container">
-        {joinedChannels?.length > 0 &&
-          joinedChannels?.map((channel: Channel, index: number) => {
+        {channelsState?.length > 0 &&
+          channelsState?.map((channel: Channel, index: number) => {
             return (
-              <>
-                <CardChannelList
-                  channel={channel}
-                  key={`${channel?.room_name}-${index}`}
-                  setChannel={setChannel}
-                  notifications={notificationsChnl}
-                  setLastVisited={setLastVisited}
-                />
-              </>
+              <CardChannelList
+                channel={channel}
+                key={`${channel?.room_name}-${index}`}
+                setChannel={setChannel}
+              />
             );
           })}
       </div>

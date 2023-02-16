@@ -16,11 +16,11 @@ import {
 } from "actions/channel";
 
 interface CardChannelProps {
-  channel: Channel;
+  channel?: Channel;
   onClick?: () => void;
   isGoChannel?: string;
   unreads?: any;
-  count: any;
+  count?: any;
 }
 
 function CardChannel({
