@@ -1,12 +1,12 @@
 import CustomModal from "components/CustomModal";
 import React, { useEffect, useState } from "react";
+import { Button, Carousel, Modal } from "react-bootstrap";
 import {
   FacebookIcon,
   TwitterIcon,
   TelegramIcon,
   WhatsappIcon,
   LinkedinIcon,
-  PinterestIcon,
   VKIcon,
   OKIcon,
   RedditIcon,
@@ -20,6 +20,18 @@ import {
   LinkedinShareButton,
   ViberShareButton,
   TwitterShareButton,
+  HatenaShareButton,
+  HatenaIcon,
+  InstapaperIcon,
+  InstapaperShareButton,
+  LineShareButton,
+  LineIcon,
+  LivejournalShareButton,
+  MailruShareButton,
+  OKShareButton,
+  WhatsappShareButton,
+  TelegramShareButton,
+  TumblrShareButton,
 } from "react-share";
 
 import { styled } from "utils/styled-component";
@@ -38,16 +50,12 @@ function ChannelDetail({
   const [isOpenShare, setIsOpenShare] = useState(false);
   const [isCopied, setIsCopied] = useState("");
 
-  const handleCloseShare = () => {
-    setIsOpenShare(false);
-  };
+  const handleCloseShare = () => setIsOpenShare(false);
+  const handleOpenShare = () => setIsOpenShare(true);
+
   const handleCopyClipborad = () => {
     navigator.clipboard.writeText(window.location.href);
     setIsCopied("Copied to Clipboard");
-  };
-
-  const handleShare = () => {
-    console.log("share");
   };
 
   useEffect(() => {
@@ -58,6 +66,7 @@ function ChannelDetail({
     }
   }, [isCopied]);
 
+  console.log("isOpenShare", isOpenShare);
   return (
     <ChannelStyled
       style={{ right: open ? 0 : -300 }}
@@ -82,7 +91,7 @@ function ChannelDetail({
               alt=""
             />
           </button>
-          <button className="btn-hover" onClick={() => setIsOpenShare(true)}>
+          <button className="btn-hover" onClick={handleOpenShare}>
             <img
               className="icon24 img-show"
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3xsOQKDY5BLENtWuBUhouEnphUrNOfoW2_w&usqp=CAU"
@@ -93,16 +102,71 @@ function ChannelDetail({
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3xsOQKDY5BLENtWuBUhouEnphUrNOfoW2_w&usqp=CAU"
               alt=""
             />
-            <CustomModal
-              title="Share with socials"
-              open={isOpenShare}
-              onClick={() => handleCloseShare()}
-            >
-              <FacebookShareButton url={window.location.href}>
-                <FacebookIcon round size={32} />
-              </FacebookShareButton>
-            </CustomModal>
           </button>
+          <CustomModal
+            title="Share with socials"
+            open={isOpenShare}
+            onClick={handleCloseShare}
+            componentName="channel-detail-modal"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Share with socials</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <Carousel>
+                <Carousel.Item>
+                  <FacebookShareButton url={window.location.href}>
+                    <FacebookIcon round size={32} />
+                  </FacebookShareButton>
+                  <TwitterShareButton url={window.location.href}>
+                    <TwitterIcon round size={32} />
+                  </TwitterShareButton>
+                  <HatenaShareButton url={window.location.href}>
+                    <HatenaIcon round size={32} />
+                  </HatenaShareButton>
+                  <InstapaperShareButton url={window.location.href}>
+                    <InstapaperIcon round size={32} />
+                  </InstapaperShareButton>
+                  <LinkedinShareButton url={window.location.href}>
+                    <LinkedinIcon round size={32} />
+                  </LinkedinShareButton>
+                  <LineShareButton url={window.location.href}>
+                    <LineIcon round size={32} />
+                  </LineShareButton>
+                  <LivejournalShareButton url={window.location.href}>
+                    <LivejournalIcon round size={32} />
+                  </LivejournalShareButton>
+                  <MailruShareButton url={window.location.href}>
+                    <MailruIcon round size={32} />
+                  </MailruShareButton>
+                  <OKShareButton url={window.location.href}>
+                    <OKIcon round size={32} />
+                  </OKShareButton>
+                  <ViberShareButton url={window.location.href}>
+                    <ViberIcon round size={32} />
+                  </ViberShareButton>
+                  <WhatsappShareButton url={window.location.href}>
+                    <WhatsappIcon round size={32} />
+                  </WhatsappShareButton>
+                </Carousel.Item>
+                <Carousel.Item>
+                  <TelegramShareButton url={window.location.href}>
+                    <TelegramIcon round size={32} />
+                  </TelegramShareButton>
+                  <TumblrShareButton url={window.location.href}>
+                    <TumblrIcon round size={32} />
+                  </TumblrShareButton>
+                </Carousel.Item>
+              </Carousel>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseShare}>
+                Close
+              </Button>
+              {/* <Button variant="primary">Share</Button> */}
+            </Modal.Footer>
+          </CustomModal>
         </div>
       </div>
     </ChannelStyled>

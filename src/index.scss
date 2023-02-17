@@ -177,3 +177,37 @@ Css for Modals
   padding: 4px 12px;
   font-weight: bold;
 }
+
+.channel-detail-modal {
+  .modal-footer {
+    button.secondary {
+      background: #eee;
+      border: 1px solid #eee;
+    }
+  }
+  .modal-body {
+    button {
+      margin-right: 8px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .carousel {
+      .carousel-control-next {
+        width: auto;
+        right: -21px;
+        background: #eee;
+      }
+      .carousel-control-prev {
+        width: auto;
+        left: -21px;
+        background: #eee;
+      }
+    }
+  }
+  .carousel-indicators {
+    display: none;
+  }
+}

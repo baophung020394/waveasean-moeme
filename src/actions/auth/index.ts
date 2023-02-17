@@ -11,7 +11,6 @@ export const login = (formData: Auth) => (dispatch: any) => {
     .then((user) => {
       setUser(user);
       console.log("user login", user);
-      // localStorage.setItem("_profile", JSON.stringify(user));
       return dispatch({
         type: "AUTH_LOGIN_SUCCESS",
         user,
@@ -54,7 +53,10 @@ export const listenToAuthChanges = () => (dispatch: any) => {
     if (authUser) {
       const userProfile = await api.getUserProfile(authUser.uid);
       console.log({ userProfile });
-      dispatch({ type: "AUTH_ON_SUCCESS", user: userProfile === undefined ? authUser : userProfile });
+      dispatch({
+        type: "AUTH_ON_SUCCESS",
+        user: userProfile === undefined ? authUser : userProfile,
+      });
       console.log(`we are authenticated`);
     } else {
       dispatch({ type: "AUTH_ON_ERROR" });
