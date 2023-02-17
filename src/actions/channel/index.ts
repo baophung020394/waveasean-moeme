@@ -274,14 +274,14 @@ export const getNotifications =
 
 export const createChannel2 =
   (newChannel: any) => (dispatch: any, getState: any) => {
+    console.log({ newChannel });
     let cloneChannel = { ...newChannel };
-    console.log("vo create channel", cloneChannel);
-    // delete cloneChannel.id;
-    // delete cloneChannel.admin;
-
+    if (!cloneChannel?.owner_name) {
+      cloneChannel.owner_name = cloneChannel?.room_name;
+    }
     const { user } = getState().auth;
     cloneChannel.createdBy = {
-      name: user?.userId,
+      name: user?.userId || user?.uid,
     };
 
     return api
@@ -298,7 +298,7 @@ export const sendChannelMessage2 =
 
     newMessage.channelId = channelId;
     newMessage.author = {
-      username: user?.userId,
+      username: user?.userId || user.displayName,
       id: user?.uid,
     };
 

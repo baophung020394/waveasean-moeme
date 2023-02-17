@@ -7,6 +7,7 @@ import IconStockTop from "assets/images/chat/stock-top.png";
 import IconSearch from "assets/images/chat/search.png";
 import IconMoreMenu from "assets/images/chat/moremenu.png";
 import { formatTimeAgo } from "utils/time";
+import ChannelDetail from "components/ChannelDetail";
 
 interface ChatBarProps {
   channel?: any;
@@ -17,9 +18,8 @@ interface ChatBarProps {
 function ChatBar({ channel, uniqueuUsers, searchTermChange }: ChatBarProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpenInput, setIsOpenInput] = useState(false);
-  const user = useSelector(({ auth }) => auth.user);
-
-  // console.log("formatTimeAgo", formatTimeAgo(channel.lastVisited["LuAM8ylFxJScsVlFHudzrTzFB4j2NHl2TNukq6e6E2ESYUKEKxKPhim2"]));
+  const [isOpen, setIsOpen] = useState(false);
+  console.log({ isOpen });
   const onChangeSearchTerm = (e: any) => {
     const target = e.target;
     searchTermChange(target.value);
@@ -86,7 +86,7 @@ function ChatBar({ channel, uniqueuUsers, searchTermChange }: ChatBarProps) {
             </div>
             <div className="chat--bar__infor__groupname__bottom">
               {channel?.isPrivateChat ? (
-                <p className="user">Online at:</p>
+                <p className="user"></p>
               ) : (
                 <>
                   <p className="user">
@@ -133,12 +133,19 @@ function ChatBar({ channel, uniqueuUsers, searchTermChange }: ChatBarProps) {
               alt=""
             />
           </button>
-          <button className="btn-hover">
+          <button className="btn-hover" onClick={() => setIsOpen(!isOpen)}>
             <img className="icon24 img-show" src={IconMoreMenu} alt="" />
             <img className="icon24 img-hover" src={IconMoreMenu} alt="" />
           </button>
         </div>
       </div>
+
+      <ChannelDetail
+        open={isOpen}
+        channel={channel}
+        uniqueuUsers={uniqueuUsers}
+      />
+      {isOpen && <div className="layer" onClick={() => setIsOpen(false)}></div>}
     </ChatBarStyled>
   );
 }
@@ -151,6 +158,17 @@ const ChatBarStyled = styled.div`
   align-items: center;
   min-height: 91px;
   max-height: 91px;
+
+  .layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0.2;
+  }
 
   .chat--bar {
     display: flex;

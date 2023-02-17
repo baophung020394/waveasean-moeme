@@ -6,7 +6,7 @@ export const getAccessToken = () => {
 };
 
 export const setUser = (user: any) => {
-  console.log(JSON.stringify(user));
+  console.log('user ne may be',JSON.stringify(user));
 
   const accessToken = user?.params.atk;
   const refreshToken = user?.params.rtk;

@@ -1,21 +1,14 @@
 import {
-  fetchChannels,
-  getChannelList,
-  setCurrentChannel,
+  setCurrentChannel
 } from "actions/channel";
-import ChannelList from "components/ChannelList";
-import NewChannels from "components/NewChannels";
-import LoadingView from "components/Spinner/LoadingView";
+import { Notification } from "components/Notifications";
+import PrivateChat from "components/PrivateChat";
+import firebase from "db/firestore";
 import { withBaseLayout } from "layouts/Base";
-import Chat from "layouts/Chat";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
 import styled from "styled-components";
-import firebase from "db/firestore";
-import PrivateChat from "components/PrivateChat";
 import { createTimestamp } from "utils/time";
-import { Notification } from "components/Notifications";
 
 function Private() {
   const [usersState, setUsersState] = useState([]);
@@ -225,8 +218,9 @@ const ChannelStyled = styled.div`
             .status {
               display: inline-block;
               border-radius: 100%;
-              width: 20px;
-              height: 20px;
+              box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+              width: 15px;
+              height: 15px;
               order: 1;
 
               &.green {

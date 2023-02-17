@@ -4,7 +4,7 @@ import { removeUser, setUser } from "services/TokenService";
 import db from "db/firestore";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
-
+import { v4 as uuidv4 } from "uuid";
 // Create collection profiles
 const createUserProfile = (userProfile: any) =>
   db.firestore().collection("profiles").doc(userProfile.uid).set(userProfile);
@@ -32,20 +32,28 @@ export const login = async ({ userId, userPassword }: Auth) => {
       userPassword: userPassword,
     },
   };
+  let myuuid = uuidv4();
 
   const resLogin: any = await axiosClient.post(url, JSON.stringify(data));
+
+  console.log({ resLogin });
   setUser(resLogin);
 
   const dataFirebase = { ...resLogin };
-  dataFirebase.email = `${data.params.userId}@gmail.com`;
-  dataFirebase.password = `${data.params.userPassword}56`;
+
+  if (resLogin?.result === "user not found") {
+    dataFirebase.email = `${data.params.userId}@gmail.com`;
+    dataFirebase.password = `${data.params.userPassword}56`;
+  } else {
+    dataFirebase.email = `${data.params.userId}@gmail.com`;
+    dataFirebase.password = `${data.params.userPassword}56`;
+  }
 
   const listUsers = await fetchUsers();
-  console.log({ listUsers });
+
   const dupUser = listUsers.filter(
     (user: any) => user.email === dataFirebase.email
   );
-  console.log({ dupUser });
 
   if (dupUser.length > 0) {
     const loginFireBaseRes = await loginFirebase(dataFirebase);
@@ -57,19 +65,19 @@ export const login = async ({ userId, userPassword }: Auth) => {
     .createUserWithEmailAndPassword(dataFirebase.email, dataFirebase.password);
 
   const userProfileRegister: any = {
-    userId: data.params.userId,
-    uid: user.uid,
-    username: data.params.userId,
+    userId: data.params.userId || userId,
+    uid: user.uid || myuuid,
+    username: data.params.userId || userId,
     email: dataFirebase.email,
-    avatar: resLogin?.params.profile_image,
-    atk: resLogin?.params.atk,
-    rtk: resLogin?.params.rtk,
+    avatar: resLogin?.params.profile_image || "",
+    atk: resLogin?.params.atk || myuuid,
+    rtk: resLogin?.params.rtk || myuuid,
     joinedChannels: [],
   };
 
   await createUserProfile(userProfileRegister);
   await createUser(userProfileRegister);
-  
+
   const loginFireBaseRes = await loginFirebase(dataFirebase);
   return loginFireBaseRes;
 };
@@ -90,6 +98,7 @@ export const loginFirebase = async ({ email, password }: any) => {
 
 export const logout = () => {
   removeUser();
+
   return firebase.auth().signOut();
 };
 
@@ -99,11 +108,12 @@ export const onAuthStateChanges = (onAuth: any) => {
 
 /** Test auth 2 */
 export const createUser = (userProfileRegister: any) => {
+  console.log({ userProfileRegister });
   return db
     .database()
     .ref("users")
     .child(userProfileRegister.uid)
     .set(userProfileRegister)
-    .then(() => console.log("saved user"))
+    .then((user) => console.log("saved user", user))
     .catch((err) => console.log("err", err));
 };

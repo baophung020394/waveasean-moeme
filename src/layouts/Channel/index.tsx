@@ -1,18 +1,16 @@
 import { fetchChannels, getChannelList } from "actions/channel";
 import ChannelList from "components/ChannelList";
 import NewChannels from "components/NewChannels";
-import LoadingView from "components/Spinner/LoadingView";
 import { withBaseLayout } from "layouts/Base";
-import Chat from "layouts/Chat";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 interface ChannelProps {}
 
 function Channel() {
   const profile = JSON.parse(localStorage.getItem("_profile"));
+  const user = useSelector(({ auth }) => auth.user);
   const joinedChannels = useSelector(({ channel }) => channel.joined);
   const availableChannels = useSelector(({ channel }) => channel.available);
   const channels = useSelector(({ channel }) => channel.channel);
@@ -23,7 +21,7 @@ function Channel() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getChannelList(profile?.params.userId));
+    dispatch(getChannelList(user.userId));
   }, [dispatch]);
 
   return (

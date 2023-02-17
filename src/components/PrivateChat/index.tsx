@@ -23,7 +23,7 @@ import { withBaseLayout } from "layouts/Base";
 import firebase from "db/firestore";
 
 interface PrivateChatProps {
-  user: any;
+  user?: any;
 }
 
 function PrivateChat({ user }: PrivateChatProps) {
