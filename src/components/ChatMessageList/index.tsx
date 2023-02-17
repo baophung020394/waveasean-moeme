@@ -261,6 +261,12 @@ const ChatMessageListStyled = styled.div`
             text-decoration: underline;
           }
         }
+
+        &.chat-left {
+          .chat-text {
+            color: #000
+          }
+        }
       }
     }
   }

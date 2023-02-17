@@ -16,10 +16,10 @@ interface ChatBarProps {
 }
 
 function ChatBar({ channel, uniqueuUsers, searchTermChange }: ChatBarProps) {
-  const [searchTerm, setSearchTerm] = useState("");
   const [isOpenInput, setIsOpenInput] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  console.log({channel})
   const onChangeSearchTerm = (e: any) => {
     const target = e.target;
     searchTermChange(target.value);

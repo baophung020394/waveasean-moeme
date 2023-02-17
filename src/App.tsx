@@ -21,20 +21,35 @@ import Header from "./components/common/Header";
 import { listenToAuthChanges } from "actions/auth";
 import PrivateView from "layouts/Private";
 import PrivateChat from "components/PrivateChat";
+import { useParams, useHistory } from "react-router-dom";
 
 export const AuthRoute = ({ children, ...rest }: any) => {
   const user = useSelector(({ auth }) => auth.user);
   const onlyChild = React.Children.only(children);
+  const history = useHistory();
+
+  const { id }: any = useParams();
+  console.log({ id });
   return (
     <Route
       {...rest}
-      render={(props) =>
-        user ? (
-          React.cloneElement(onlyChild, { ...rest, ...props })
-        ) : (
-          <Redirect to="/login" />
-        )
-      }
+      render={(props) => {
+        // console.log({ props });
+        if (
+          props?.match.params.id &&
+          localStorage.getItem("urlCopy")?.length > 0
+        ) {
+          console.log({props})
+          console.log("co");
+          return React.cloneElement(onlyChild, { ...rest, ...props })
+        } else {
+          return user ? (
+            React.cloneElement(onlyChild, { ...rest, ...props })
+          ) : (
+            <Redirect to="/login" />
+          );
+        }
+      }}
     />
   );
 };
@@ -50,11 +65,11 @@ function MoeMe() {
 
   useEffect(() => {
     const unsubFromAuth = dispatch(listenToAuthChanges());
-    const unsubFromConnection = dispatch(listenToConnectionChanges());
+    // const unsubFromConnection = dispatch(listenToConnectionChanges());
 
     return () => {
       unsubFromAuth();
-      unsubFromConnection();
+      // unsubFromConnection();
     };
   }, [dispatch]);
 

@@ -55,6 +55,8 @@ function ChannelDetail({
 
   const handleCopyClipborad = () => {
     navigator.clipboard.writeText(window.location.href);
+    localStorage.setItem("urlCopy", window.location.href);
+    localStorage.setItem("selectedChannel", JSON.stringify(channel));
     setIsCopied("Copied to Clipboard");
   };
 
