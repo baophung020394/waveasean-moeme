@@ -1,6 +1,4 @@
-import {
-  setCurrentChannel
-} from "actions/channel";
+import { setCurrentChannel } from "actions/channel";
 import { Notification } from "components/Notifications";
 import PrivateChat from "components/PrivateChat";
 import firebase from "db/firestore";
@@ -108,6 +106,8 @@ function Private() {
                 className="icon40 avatar"
                 data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${u?.userId}`}
                 type="image/png"
+                onClick={(e) => e.preventDefault()}
+                style={{ pointerEvents: "none" }}
               >
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/147/147144.png"
@@ -137,7 +137,6 @@ function Private() {
 
   const setLastVisited = (user: any, channel: any) => {
     if (channel) {
-      console.log("chon ne");
       const lastVisited = usersRef
         .child(user.uid)
         .child("lastVisited")
@@ -178,7 +177,7 @@ const ChannelStyled = styled.div`
       .ul-list {
         list-style: none;
         padding: 1rem;
-        min-width: 420px;
+        min-width: 33%;
         border-right: 1px solid #e6ecf3;
 
         li {
@@ -189,6 +188,7 @@ const ChannelStyled = styled.div`
           padding: 5px 10px;
           margin-bottom: 16px;
           cursor: pointer;
+          border-radius: 8px;
 
           &:last-child {
             margin-bottom: 0;
@@ -200,7 +200,7 @@ const ChannelStyled = styled.div`
           }
           .status-user {
             display: flex;
-            align-item: center;
+            align-items: center;
 
             p {
               order: 0;

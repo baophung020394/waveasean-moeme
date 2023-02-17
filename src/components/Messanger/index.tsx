@@ -27,16 +27,15 @@ import { useSelector } from "react-redux";
 interface MessangerProps {
   channel: any;
   onSubmit: (message: any) => void;
-  uploadImage?: (data: any) => void;
+  uploadFileProp?: (data: any) => void;
 }
 
-function Messanger({ onSubmit, channel, uploadImage }: MessangerProps) {
+function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
   const [value, setValue] = useState<any>("");
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
-  const _messages = JSON.parse(localStorage.getItem("_messages"));
   const textareaRef = useRef<any>(null);
   const user = JSON.parse(localStorage.getItem("_profile"));
-  const userRedux = useSelector(({ auth }) => auth.user);
+
   let myuuid = uuidv4();
 
   /**
@@ -59,22 +58,33 @@ function Messanger({ onSubmit, channel, uploadImage }: MessangerProps) {
   const imageChange = (e: any) => {
     if (e.target.files && e.target.files.length > 0) {
       const image = e.target.files[0];
-
+      console.log({ image });
       const metadata = {
         type: image.type,
+        name: image.name,
       };
 
-      console.log({ image });
+      if (["video/mp4", "video/mp3"].includes(metadata.type)) {
+        metadata.type = image.type.replace("video/", "");
+      } else if (
+        ["image/png", "image/jpeg", "image/jpg"].includes(metadata.type)
+      ) {
+        metadata.type = image.type.replace("image/", "");
+      } else {
+        metadata.type = image.type.replace("application/", "");
+      }
+
       let newMessage = {
         content: ``,
         files: image,
         idMessage: myuuid,
         user,
         timestamp: createTimestamp(),
-        fileType: metadata.type,
+        fileType: image.type,
         metadata,
       };
-      uploadImage(newMessage);
+
+      uploadFileProp(newMessage);
       // const reader = new FileReader();
 
       // reader.readAsDataURL(image);

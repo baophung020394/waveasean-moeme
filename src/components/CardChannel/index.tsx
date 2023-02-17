@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   createChannel,
+  createChannel2,
   fetchUnreads,
   joinChannel,
   setCurrentChannel,
@@ -109,7 +110,7 @@ function CardChannel({
     );
 
     if (isConfirming) {
-      dispatch(createChannel(channel, user.uid));
+      dispatch(createChannel2(channel));
     } else {
       dispatch({ type: "CHANNELS_CREATE_FAIL" });
     }

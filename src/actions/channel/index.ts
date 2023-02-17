@@ -283,33 +283,6 @@ export const createChannel2 =
       name: user?.userId || user?.uid,
     };
 
-    let fetchChnls = await api.fetchChannels();
-    let ids = new Set(fetchChnls.map((room: any) => room?.roomId));
-
-    fetchChnls = fetchChnls.filter(
-      (room: any) => room?.roomId === newChannel?.roomId
-    );
-
-    if (fetchChnls?.length > 0) {
-      const error = {
-        type: "error",
-        message: "The channel is duplicate, please refresh page!",
-      };
-      dispatch({
-        type: "CHANNELS_CREATE_FAIL",
-        error,
-      });
-    } else {
-      const channelRef = db.database().ref("channels");
-      const key = channelRef.push().key;
-      await api.joinChannel(user.userId, key);
-
-      dispatch({
-        type: "CHANNELS_JOIN_SUCCESS",
-        channel: { ...newChannel, id: key },
-      });
-    }
-
     return api
       .createChannel2(cloneChannel, user)
       .then(() => console.log("save success"))

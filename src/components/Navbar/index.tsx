@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import Chat1 from "assets/images/icon/chat.png";
 import Chat2 from "assets/images/icon/chat2.png";
@@ -16,32 +16,32 @@ function Navbar() {
     <NavbarStyled className="navbar-left">
       <ul>
         <li>
-          <Link to="/home">
+          <NavLink to="/home" activeClassName="selected">
             <img src={Home} alt="" />
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/channel">
+          <NavLink activeClassName="selected" to="/channel">
             <img src={Chat2} alt="" />
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/private">
+          <NavLink activeClassName="selected" to="/private">
             <img src={Chat1} alt="" />
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/profile">
+          <NavLink activeClassName="selected" to="/profile">
             <img src={Person} alt="" />
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to="/settings">
+          <NavLink activeClassName="selected" to="/settings">
             <img
               src="https://cdn-icons-png.flaticon.com/512/126/126472.png"
               alt=""
             />
-          </Link>
+          </NavLink>
         </li>
       </ul>
     </NavbarStyled>
@@ -79,6 +79,10 @@ const NavbarStyled = styled.div`
           width: 24px;
           height: 24px;
           object-fit: contain;
+        }
+
+        &.selected {
+          background-color: #eee;
         }
       }
     }

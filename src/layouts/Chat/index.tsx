@@ -87,10 +87,11 @@ function Chat({}: ChatProps) {
 
   const uploadImage = (data: any) => {
     let newData = { ...data };
-    const filePath = `chat/images/${newData.idMessage}.png`;
+    const filePath = `chat/files/${newData.idMessage}.${newData.metadata.type}`;
+
     storageRef
       .child(filePath)
-      .put(newData.files, { contentType: newData?.metadata.type })
+      .put(newData.files, { contentType: newData.fileType })
       .then((data) => {
         data.ref.getDownloadURL().then((url: string) => {
           newData.image = url;
@@ -183,7 +184,7 @@ function Chat({}: ChatProps) {
           <Messanger
             onSubmit={sendMessage}
             channel={currentChannel}
-            uploadImage={uploadImage}
+            uploadFileProp={uploadImage}
           />
         </div>
       </div>
@@ -199,7 +200,7 @@ const ChatStyled = styled.div`
 
   .chat--view {
     &__channels {
-      min-width: 420px;
+      min-width: 33%;
       border-right: 1px solid #e6ecf3;
     }
 

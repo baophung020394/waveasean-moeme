@@ -70,42 +70,6 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
     }
   }, [!currentChannel ? channelsState : null]);
 
-  // useEffect(() => {
-  //   if (joinedChannels.length > 0) {
-  //     setFirstChannel();
-  //     const firstChannel = joinedChannels[0];
-  //     if (firstLoad && joinedChannels.length > 0) {
-  //       setChannel(firstChannel);
-  //       dispatch(setCurrentChannel(firstChannel));
-  //     }
-  //     setFirstLoad(false);
-  //   //   joinedChannels.forEach((chnl: any) => {
-  //   //     const unsubFromChannel = dispatch(
-  //   //       subscribeNotificationToMessages(
-  //   //         chnl?.id,
-  //   //         channel?.id,
-  //   //         notificationsChnl
-  //   //       )
-  //   //     );
-
-  //   //     if (!messageSubsNotifications) {
-  //   //       const unsubFromMessages = dispatch(
-  //   //         subscribeNotificationToMessages(
-  //   //           chnl?.id,
-  //   //           channel?.id,
-  //   //           notificationsChnl
-  //   //         )
-  //   //       );
-  //   //       dispatch(registerMessageSubscription(chnl?.id, unsubFromMessages));
-  //   //     }
-
-  //   //     return () => {
-  //   //       unsubFromChannel();
-  //   //     };
-  //   //   });
-  //   }
-  // }, [joinedChannels, channel?.id]);
-
   if (isChecking) {
     return <LoadingView message="Load channels...." />;
   }

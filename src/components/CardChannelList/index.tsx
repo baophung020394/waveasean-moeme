@@ -80,8 +80,6 @@ function CardChannelList({
       setLastVisited(user, channel);
       dispatch(setCurrentChannel(channel));
     }
-    // dispatch(clearNotifications(notifications, channel?.id));
-    // setLastVisited(user, channel?.id);
     history.push(`/channel-detail/${channel?.id}`);
   };
 
@@ -93,18 +91,6 @@ function CardChannelList({
     lastVisited.set(createTimestamp());
     lastVisited.onDisconnect().set(createTimestamp());
   };
-
-  //   const selectChannel = (channel) => {
-  //     setLastVisited(props.user,props.channel);
-  //     setLastVisited(props.user,channel);
-  //     props.selectChannel(channel);
-  // }
-
-  // const setLastVisited = (user, channel) => {
-  //     const lastVisited = usersRef.child(user.uid).child("lastVisited").child(channel.id);
-  //     lastVisited.set(firebase.database.ServerValue.TIMESTAMP);
-  //     lastVisited.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
-  // }
 
   return (
     <CardChannelStyled>
@@ -155,9 +141,6 @@ function CardChannelList({
             notificationChannelId={channel.id}
             displayName={"# " + channel.name}
           />
-          {/* <Notification user={props.user} channel={props.channel}
-                        notificationChannelId={channel.id}
-                        displayName= {"# " + channel.name} /> */}
         </div>
         <div className="card--bottom">
           <div className="card--bottom__person">

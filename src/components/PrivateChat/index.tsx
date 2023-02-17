@@ -34,6 +34,7 @@ function PrivateChat({ user }: PrivateChatProps) {
   const [messagesState, setMessagesState] = useState([]);
   const [searchTermState, setSearchTermState] = useState("");
 
+  console.log("Object.entries(user)", Object.values(user));
   const sendMessage = useCallback(
     (message) => {
       dispatch(sendChannelMessage2(message, user?.id));
@@ -41,12 +42,13 @@ function PrivateChat({ user }: PrivateChatProps) {
     [user?.id]
   );
 
-  const uploadImage = (data: any) => {
+  const uploadFile = (data: any) => {
     let newData = { ...data };
-    const filePath = `chat/images/${newData.idMessage}.png`;
+    const filePath = `chat/files/${newData.idMessage}.${newData.metadata.type}`;
+
     storageRef
       .child(filePath)
-      .put(newData.files, { contentType: newData?.metadata.type })
+      .put(newData.files, { contentType: newData.fileType })
       .then((data) => {
         data.ref.getDownloadURL().then((url: string) => {
           newData.image = url;
@@ -100,9 +102,9 @@ function PrivateChat({ user }: PrivateChatProps) {
     return messages;
   };
 
-  //   if (!activeChannel?.id) {
-  //     return <LoadingView message="Loading Chat..." />;
-  //   }
+  if (!currentChannel?.id) {
+    return <LoadingView message="Loading Chat..." />;
+  }
 
   return (
     <ChatStyled className="chat--view">
@@ -118,15 +120,10 @@ function PrivateChat({ user }: PrivateChatProps) {
               searchTermState ? filterMessageBySearchTerm() : messagesState
             }
           />
-          {/* <div className="chat--view__content__options">
-            {activeChannel?.enableWriteMsg === "1" && (
-              <ChatOptions submitStock={sendMessage} />
-            )}
-          </div> */}
           <Messanger
             onSubmit={sendMessage}
             channel={currentChannel}
-            uploadImage={uploadImage}
+            uploadFileProp={uploadFile}
           />
         </div>
       </div>

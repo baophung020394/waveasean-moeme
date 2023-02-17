@@ -45,7 +45,7 @@ const ChannelStyled = styled.div`
 
   .channel-container {
     &__list {
-      min-width: 420px;
+      min-width: 33%;
       border-right: 1px solid #e6ecf3;
     }
   }

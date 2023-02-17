@@ -33,23 +33,30 @@ export const Notification = ({
       messagesRef.on("value", (snap) => {
         let messages = snap.val();
 
-        let channelsId = Object.keys(messages);
-        let messagesTimeStamp: any = {};
-        channelsId.forEach((channelId) => {
-          let channelMessageKeys: any = Object.keys(messages[channelId]);
-          channelMessageKeys.reduce((agg: any, item: any) => {
-            messagesTimeStamp[channelId] = [
-              ...(messagesTimeStamp[channelId] || []),
-            ];
-            messagesTimeStamp[channelId].push(
-              messages[channelId][item].timestamp
-            );
+        if (messages) {
+          let channelsId = Object.keys(messages);
+          let messagesTimeStamp: any = {};
+          channelsId.forEach((channelId) => {
+            let channelMessageKeys: any = Object.keys(messages[channelId]);
+            channelMessageKeys.reduce((agg: any, item: any) => {
+              messagesTimeStamp[channelId] = [
+                ...(messagesTimeStamp[channelId] || []),
+              ];
+              messagesTimeStamp[channelId].push(
+                messages[channelId][item].timestamp
+              );
+            });
           });
-        });
 
-        setMessagesTimeStampState(messagesTimeStamp);
+          setMessagesTimeStampState(messagesTimeStamp);
+        }
       });
     }
+
+    return () => {
+      messagesRef.off();
+      setMessagesTimeStampState([]);
+    };
   }, [userProps]);
 
   const calculateNotificationCount = (channelId: string) => {

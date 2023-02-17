@@ -69,7 +69,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
             );
           } else if (
             message?.image &&
-            ["image/jpeg", "image/png"].includes(message?.fileType)
+            ["image/jpeg", "image/png", "image/jpg"].includes(message?.fileType)
           ) {
             return (
               <li
@@ -106,7 +106,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
               </li>
             );
           } else if (
-            message?.files &&
+            message?.fileType &&
             ["video/mp4", "video/mp3"].includes(message?.fileType)
           ) {
             return (
@@ -134,21 +134,60 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                   </div>
                 </div>
                 <div className="chat-text-wrapper">
-                  <video
-                    width="320"
-                    height="240"
-                    controls
-                    src={JSON.parse(message?.files)}
-                  >
+                  <video width="320" height="240" controls src={message.image}>
                     Your browser does not support the video tag.
                   </video>
                 </div>
               </li>
             );
           } else if (
-            message?.files &&
-            ["application/pdf"].includes(message?.fileType)
+            message?.fileType &&
+            ![
+              "video/mp4",
+              "video/mp3",
+              "image/jpeg",
+              "image/png",
+              "image/jpg",
+            ].includes(message?.fileType)
           ) {
+            return (
+              <li
+                className={`${isAuthorOf(message)} other-file`}
+                key={`${message?.id}-${idx}`}
+              >
+                <div className="chat-avatar">
+                  <object
+                    className="icon40 avatar"
+                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.params.userId}&roomid=${message?.roomId}`}
+                    type="image/png"
+                  >
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/147/147144.png"
+                      alt="avatar"
+                      className="icon40 avatar"
+                    />
+                  </object>
+
+                  <div className="chat-name">
+                    {message?.author.username}
+                    <div className="chat-hour">
+                      {formatTimeAgo(message.timestamp)}
+                    </div>
+                  </div>
+                </div>
+                <div className={`chat-text-wrapper `}>
+                  <button
+                    className="chat-text"
+                    type="submit"
+                    onClick={() => `${window.open(`${message.image}`)}`}
+                  >
+                    {message?.metadata.name}
+                  </button>
+
+                  {/* <span className="chat-spacer"></span> */}
+                </div>
+              </li>
+            );
           } else {
             return (
               <li className={isAuthorOf(message)} key={`${message?.id}-${idx}`}>
@@ -168,7 +207,6 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                   <div className="chat-name">
                     {message?.author.username}
                     <div className="chat-hour">
-                      {" "}
                       {formatTimeAgo(message.timestamp)}
                     </div>
                   </div>
@@ -179,7 +217,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                   }`}
                 >
                   <span className="chat-text">{message?.content}</span>
-                  <span className="chat-spacer"></span>
+                  {/* <span className="chat-spacer"></span> */}
                 </div>
               </li>
             );
@@ -210,6 +248,19 @@ const ChatMessageListStyled = styled.div`
     li {
       &:last-child {
         margin-bottom: 0;
+      }
+
+      &.other-file {
+        .chat-text-wrapper {
+          .chat-text {
+            font-size: 16px !important;
+            color: #fff;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-decoration: underline;
+          }
+        }
       }
     }
   }
