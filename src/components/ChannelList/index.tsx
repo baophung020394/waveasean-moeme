@@ -74,10 +74,10 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
 
   useEffect(() => {
     if (
-      localStorage.getItem("urlCopy").length > 0 &&
+      localStorage.getItem("_user")?.length &&
+      localStorage.getItem("urlCopy")?.length > 0 &&
       localStorage.getItem("selectedChannel")?.length > 0
     ) {
-      // alert("co ne");
       dispatch(
         setCurrentChannel(JSON.parse(localStorage.getItem("selectedChannel")))
       );
@@ -87,7 +87,8 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
     }
   }, [
     localStorage.getItem("selectedChannel")?.length &&
-      localStorage.getItem("urlCopy").length,
+      localStorage.getItem("urlCopy")?.length,
+    localStorage.getItem("_user")?.length,
   ]);
   // || !localStorage.getItem("selectedChannel").length
   if (isChecking) {

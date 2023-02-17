@@ -250,6 +250,9 @@ const CardChannelStyled = styled.div`
       padding: 8px 15px;
 
       &__person {
+        display: flex;
+        align-items: center;
+        
         img {
           width: 24px;
           height: 24px;

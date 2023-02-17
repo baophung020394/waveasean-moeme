@@ -29,19 +29,18 @@ export const AuthRoute = ({ children, ...rest }: any) => {
   const history = useHistory();
 
   const { id }: any = useParams();
-  console.log({ id });
+  console.log({ user });
   return (
     <Route
       {...rest}
       render={(props) => {
-        // console.log({ props });
         if (
           props?.match.params.id &&
           localStorage.getItem("urlCopy")?.length > 0
         ) {
-          console.log({props})
+          console.log({ props });
           console.log("co");
-          return React.cloneElement(onlyChild, { ...rest, ...props })
+          return React.cloneElement(onlyChild, { ...rest, ...props });
         } else {
           return user ? (
             React.cloneElement(onlyChild, { ...rest, ...props })
@@ -65,11 +64,11 @@ function MoeMe() {
 
   useEffect(() => {
     const unsubFromAuth = dispatch(listenToAuthChanges());
-    // const unsubFromConnection = dispatch(listenToConnectionChanges());
+    const unsubFromConnection = dispatch(listenToConnectionChanges());
 
     return () => {
       unsubFromAuth();
-      // unsubFromConnection();
+      unsubFromConnection();
     };
   }, [dispatch]);
 
