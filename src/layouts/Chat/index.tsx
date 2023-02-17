@@ -176,13 +176,13 @@ function Chat({}: ChatProps) {
             }
           />
           <div className="chat--view__content__options">
-            {activeChannel?.enableWriteMsg === "1" && (
+            {currentChannel?.enableWriteMsg === "1" && (
               <ChatOptions submitStock={sendMessage} />
             )}
           </div>
           <Messanger
             onSubmit={sendMessage}
-            channel={activeChannel}
+            channel={currentChannel}
             uploadImage={uploadImage}
           />
         </div>

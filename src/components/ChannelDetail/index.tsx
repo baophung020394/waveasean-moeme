@@ -66,7 +66,6 @@ function ChannelDetail({
     }
   }, [isCopied]);
 
-  console.log("isOpenShare", isOpenShare);
   return (
     <ChannelStyled
       style={{ right: open ? 0 : -300 }}

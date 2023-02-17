@@ -19,7 +19,7 @@ axiosClient.interceptors.request.use(
   function (config: AxiosRequestConfig) {
     // Do something before request is sent
     const token = getAccessToken();
-    console.log({token})
+
     if (token) {
       (config.headers as AxiosHeaders).set("Authorization", `MOA ${token}`);
     }

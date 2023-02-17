@@ -34,10 +34,8 @@ function PrivateChat({ user }: PrivateChatProps) {
   const [messagesState, setMessagesState] = useState([]);
   const [searchTermState, setSearchTermState] = useState("");
 
-  console.log({ user });
   const sendMessage = useCallback(
     (message) => {
-      console.log({ message });
       dispatch(sendChannelMessage2(message, user?.id));
     },
     [user?.id]

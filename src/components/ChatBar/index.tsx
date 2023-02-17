@@ -19,7 +19,7 @@ function ChatBar({ channel, uniqueuUsers, searchTermChange }: ChatBarProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpenInput, setIsOpenInput] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  console.log({ isOpen });
+
   const onChangeSearchTerm = (e: any) => {
     const target = e.target;
     searchTermChange(target.value);
@@ -133,10 +133,12 @@ function ChatBar({ channel, uniqueuUsers, searchTermChange }: ChatBarProps) {
               alt=""
             />
           </button>
-          <button className="btn-hover" onClick={() => setIsOpen(!isOpen)}>
-            <img className="icon24 img-show" src={IconMoreMenu} alt="" />
-            <img className="icon24 img-hover" src={IconMoreMenu} alt="" />
-          </button>
+          {!channel?.isPrivateChat && (
+            <button className="btn-hover" onClick={() => setIsOpen(!isOpen)}>
+              <img className="icon24 img-show" src={IconMoreMenu} alt="" />
+              <img className="icon24 img-hover" src={IconMoreMenu} alt="" />
+            </button>
+          )}
         </div>
       </div>
 

@@ -46,7 +46,7 @@ export const Notification = ({
             );
           });
         });
-        console.log({ messagesTimeStamp });
+
         setMessagesTimeStampState(messagesTimeStamp);
       });
     }
@@ -59,7 +59,6 @@ export const Notification = ({
       channel &&
       channel.id !== channelId
     ) {
-      console.log("dem ne");
       let lastVisited = channelsVisitedState[channelId];
 
       let channelMessagesTimeStamp = messagesTimeStampState[channelId];
@@ -69,9 +68,10 @@ export const Notification = ({
           (timestamp: any) => !lastVisited || lastVisited < timestamp
         ).length;
 
-        console.log({ channelMessagesTimeStamp });
         return notificationCount === 0 ? null : (
-          <p className="notitext" color="red">{notificationCount}</p>
+          <p className="notitext" color="red">
+            {notificationCount}
+          </p>
         );
       }
     }

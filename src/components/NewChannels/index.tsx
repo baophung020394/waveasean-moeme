@@ -43,9 +43,9 @@ function NewChannels({
     setOpen(false);
   };
 
-  // if (isChecking?.result) {
-  //   return <LoadingView message="Creating channel..." />;
-  // }
+  if (isChecking?.result) {
+    return <LoadingView message="Creating channel..." />;
+  }
 
   return (
     <AvailableChatsStyled>
@@ -91,7 +91,7 @@ function NewChannels({
         )}
 
         <div className="available--created ">
-          <h1 className="mb-3">Channels Available</h1>
+          {/* <h1 className="mb-3">Channels Available</h1> */}
           <div className="container-fluid">
             {availableChannels?.length > 0 &&
               availableChannels.map((channel: any, idx: number) => (
