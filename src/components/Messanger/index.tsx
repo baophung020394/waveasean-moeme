@@ -17,10 +17,6 @@ import EmojiPicker, {
   SkinTonePickerLocation,
 } from "emoji-picker-react";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import { fetchURL } from "utils/converURLToContent";
-import html2canvas from "html2canvas";
-import * as htmlToImage from "html-to-image";
 import { createTimestamp } from "utils/time";
 import { useSelector } from "react-redux";
 
@@ -63,6 +59,7 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
         type: image.type,
         name: image.name,
       };
+      console.log(image.name.search("pptx"));
 
       if (["video/mp4", "video/mp3"].includes(metadata.type)) {
         metadata.type = image.type.replace("video/", "");
@@ -70,6 +67,12 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
         ["image/png", "image/jpeg", "image/jpg"].includes(metadata.type)
       ) {
         metadata.type = image.type.replace("image/", "");
+      } else if (image.name.search("pptx")) {
+        metadata.type = "pptx";
+      } else if (image.name.search("docx")) {
+        metadata.type = "docx";
+      } else if (image.name.search("xlsx")) {
+        metadata.type = "xlsx";
       } else {
         metadata.type = image.type.replace("application/", "");
       }

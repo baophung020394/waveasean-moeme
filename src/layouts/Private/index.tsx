@@ -177,7 +177,7 @@ const ChannelStyled = styled.div`
       .ul-list {
         list-style: none;
         padding: 1rem;
-        min-width: 33%;
+        width: 33%;
         max-width: 420px;
         border-right: 1px solid #e6ecf3;
 

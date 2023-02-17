@@ -200,7 +200,7 @@ const ChatStyled = styled.div`
 
   .chat--view {
     &__channels {
-      min-width: 33%;
+      width: 33%;
       max-width: 420px;
       border-right: 1px solid #e6ecf3;
     }
