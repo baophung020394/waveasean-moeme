@@ -28,7 +28,6 @@ export const AuthRoute = ({ children, ...rest }: any) => {
   const onlyChild = React.Children.only(children);
   const history = useHistory();
 
-  const { id }: any = useParams();
   console.log({ user });
   return (
     <Route

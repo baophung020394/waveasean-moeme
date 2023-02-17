@@ -67,8 +67,8 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
   useEffect(() => {
     if (channelsState.length > 0) {
       dispatch(setCurrentChannel(channelsState[0]));
-      localStorage.setItem("urlCopy", "");
-      localStorage.setItem("selectedChannel", "");
+      // localStorage.setItem("urlCopy", "");
+      // localStorage.setItem("selectedChannel", "");
     }
   }, [!currentChannel ? channelsState : null]);
 
