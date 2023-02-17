@@ -59,23 +59,32 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
         type: image.type,
         name: image.name,
       };
-      console.log(image.name.search("pptx"));
 
+      const afterDot = image.name.substr(image.name.lastIndexOf(".") + 1);
+      console.log("dot", afterDot);
       if (["video/mp4", "video/mp3"].includes(metadata.type)) {
         metadata.type = image.type.replace("video/", "");
       } else if (
         ["image/png", "image/jpeg", "image/jpg"].includes(metadata.type)
       ) {
         metadata.type = image.type.replace("image/", "");
-      } else if (image.name.search("pptx")) {
+      } else if (afterDot === "pptx") {
+        console.log("pptx");
         metadata.type = "pptx";
-      } else if (image.name.search("docx")) {
+      } else if (afterDot === "docx") {
+        console.log("docx");
         metadata.type = "docx";
-      } else if (image.name.search("xlsx")) {
+      } else if (afterDot === "xlsx") {
+        console.log("xlsx");
         metadata.type = "xlsx";
+      } else if (afterDot === "mov") {
+        console.log("xlsx");
+        metadata.type = ".mov";
       } else {
         metadata.type = image.type.replace("application/", "");
       }
+
+      console.log(metadata.type);
 
       let newMessage = {
         content: ``,

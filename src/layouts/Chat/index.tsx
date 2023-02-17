@@ -87,6 +87,7 @@ function Chat({}: ChatProps) {
 
   const uploadImage = (data: any) => {
     let newData = { ...data };
+    console.log({newData})
     const filePath = `chat/files/${newData.idMessage}.${newData.metadata.type}`;
 
     storageRef
