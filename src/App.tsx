@@ -1,12 +1,16 @@
 import { listenToConnectionChanges } from "actions/app";
+import { listenToAuthChanges } from "actions/auth";
+import PrivateChat from "components/PrivateChat";
 import LoadingView from "components/Spinner/LoadingView";
-import ChatView from "layouts/Chat";
+import RegisterView from "layouts/Register";
 import ChannelView from "layouts/Channel";
+import ChatView from "layouts/Chat";
 import HomeView from "layouts/Home";
 import LoginView from "layouts/Login";
+import PrivateView from "layouts/Private";
 import ProfileView from "layouts/Profile";
 import SettingsView from "layouts/Settings";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   HashRouter as Router,
@@ -14,21 +18,15 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import { getAccessToken } from "services/TokenService";
 import StoreProvider from "store/StoreProvider";
 import styled from "styled-components";
 import Header from "./components/common/Header";
-import { listenToAuthChanges } from "actions/auth";
-import PrivateView from "layouts/Private";
-import PrivateChat from "components/PrivateChat";
-import { useParams, useHistory } from "react-router-dom";
 
 export const AuthRoute = ({ children, ...rest }: any) => {
   const user = useSelector(({ auth }) => auth.user);
   const onlyChild = React.Children.only(children);
-  const history = useHistory();
 
-  console.log({ user });
+  // console.log({ user });
   return (
     <Route
       {...rest}
@@ -37,8 +35,6 @@ export const AuthRoute = ({ children, ...rest }: any) => {
           props?.match.params.id &&
           localStorage.getItem("urlCopy")?.length > 0
         ) {
-          console.log({ props });
-          console.log("co");
           return React.cloneElement(onlyChild, { ...rest, ...props });
         } else {
           return user ? (
@@ -99,6 +95,9 @@ function MoeMe() {
         <Switch>
           <Route path="/login">
             <LoginView />
+          </Route>
+          <Route path="/register">
+            <RegisterView />
           </Route>
           <AuthRoute path="/home">
             <HomeView />

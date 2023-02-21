@@ -5,38 +5,111 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { formatTimeAgo } from "utils/time";
 import { isEmojisOnly } from "utils/convertString";
+import ProgressBars from "components/common/ProgressBars";
+import ProgressBar from "react-bootstrap/ProgressBar";
+import { v4 as uuidv4 } from "uuid";
+import { convertFiles } from "utils/handleFiles";
+import { createTimestamp } from "utils/time";
 
 interface ChatMessageListProps {
   messages: any;
+  progressBar?: any;
+  selectedFile?: any;
+  uploadFileProp?: (data: any) => void;
 }
 
-function ChatMessageList({ messages = [] }: ChatMessageListProps) {
-  // const user = JSON.parse(localStorage.getItem("_profile"));
+function ChatMessageList({
+  messages = [],
+  progressBar,
+  selectedFile,
+  uploadFileProp,
+}: ChatMessageListProps) {
+  // console.log("messageState", messageState);
+  // console.log("progressBar", progressBar);
+  // console.log({ selectedFile });
+  // console.log({ messages });
+  let myuuid = uuidv4();
   const user = useSelector(({ auth }) => auth.user);
+  const profile = JSON.parse(localStorage.getItem("_profile"));
   let messagesRef: any = useRef<any>();
+  let boxMessagesRef: any = useRef<any>();
 
   const isAuthorOf = useCallback(
     (message: any) => {
       return message?.author?.id === user?.uid ? "chat-right" : "chat-left";
-      // return message?.author?.uid === user?.uid ? "chat-right" : "chat-left";
     },
     [messages]
   );
 
   const imageLoaded = () => {
-    messagesRef.scrollIntoView({ behavior: "smooth" });
+    messagesRef.scrollIntoView();
+  };
+
+  const dropHandler = (ev: any) => {
+    console.log("File(s) dropped");
+
+    // Prevent default behavior (Prevent file from being opened)
+    ev.preventDefault();
+
+    if (ev.dataTransfer.items) {
+      // Use DataTransferItemList interface to access the file(s)
+      [...ev.dataTransfer.items].forEach((item, i) => {
+        if (!uploadFileProp) return;
+        // If dropped items aren't files, reject them
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          console.log(`… file[${i}].name = ${file.name}`);
+          let newMessage = {
+            content: ``,
+            files: file,
+            idMessage: myuuid,
+            user: profile,
+            timestamp: createTimestamp(),
+            fileType: file.type,
+            metadata: convertFiles(file),
+          };
+
+          uploadFileProp(newMessage);
+          boxMessagesRef.current.style.border = "unset";
+        }
+      });
+    } else {
+      // Use DataTransfer interface to access the file(s)
+      [...ev.dataTransfer.files].forEach((file, i) => {
+        console.log(`… file[${i}].name = ${file.name}`);
+        boxMessagesRef.current.style.border = "unset";
+      });
+    }
+  };
+
+  const dragOverHandler = (ev: any) => {
+    console.log("File(s) in drop zone");
+    boxMessagesRef.current.style.border = "3px solid rgb(29 78 216)";
+    // Prevent default behavior (Prevent file from being opened)
+    ev.preventDefault();
+  };
+
+  const dragLeaveHandler = (ev: any) => {
+    console.log("File(s) in drop zone left");
+    boxMessagesRef.current.style.border = "unset";
+    ev.preventDefault();
   };
 
   useEffect(() => {
-    // if (messages?.length > 0) {
-    messagesRef?.scrollIntoView({ behavior: "smooth" });
-    // }
+    messagesRef?.scrollIntoView();
   }, [messages]);
 
   return (
-    <ChatMessageListStyled className="chat--container">
+    <ChatMessageListStyled
+      className="chat--container"
+      onDrop={dropHandler}
+      onDragOver={dragOverHandler}
+      onDragLeave={dragLeaveHandler}
+      ref={boxMessagesRef}
+    >
       <ul ref={messagesRef} className="chat-box chatContainerScroll">
-        {messages?.map((message: any, idx: number) => {
+        {messages.map((message: any, idx: number) => {
+          // console.log({ message });
           if (message?.stocks) {
             return (
               <li
@@ -68,7 +141,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
               </li>
             );
           } else if (
-            message?.image &&
+            message?.fileType &&
             ["image/jpeg", "image/png", "image/jpg"].includes(message?.fileType)
           ) {
             return (
@@ -89,7 +162,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                     />
                   </object>
                   <div className="chat-name">
-                    {message?.author.username}
+                    {message?.author?.username}
                     <div className="chat-hour">
                       {formatTimeAgo(message.timestamp)}
                     </div>
@@ -98,10 +171,20 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                 <div className="chat-text-wrapper">
                   <img
                     className="image-chat"
-                    src={message.image}
+                    src={
+                      message?.status === "Uploading"
+                        ? URL.createObjectURL(message?.files)
+                        : message.files
+                    }
                     alt="Thumb"
                     onLoad={imageLoaded}
                   />
+                  {selectedFile?.timestamp === message?.timestamp &&
+                    message.status === "Uploading" && (
+                      <>
+                        <ProgressBars progressBar={progressBar} />;
+                      </>
+                    )}
                 </div>
               </li>
             );
@@ -111,7 +194,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
           ) {
             return (
               <li
-                className={`${isAuthorOf(message)} chat-images`}
+                className={`${isAuthorOf(message)} chat-videos`}
                 key={`${message?.ID}-${idx}`}
               >
                 <div className="chat-avatar">
@@ -127,14 +210,28 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                     />
                   </object>
                   <div className="chat-name">
-                    {message?.author.username}
+                    {message?.author?.username}
                     <div className="chat-hour">
                       {formatTimeAgo(message.timestamp)}
                     </div>
                   </div>
                 </div>
                 <div className="chat-text-wrapper">
-                  <video width="320" height="240" controls src={message.image}>
+                  {selectedFile?.timestamp === message?.timestamp &&
+                    message.status === "Uploading" && (
+                      <>
+                        <ProgressBars progressBar={progressBar} />;
+                      </>
+                    )}
+                  <video
+                    onLoad={imageLoaded}
+                    controls
+                    src={
+                      message?.status === "Uploading"
+                        ? URL.createObjectURL(message?.files)
+                        : message.files
+                    }
+                  >
                     Your browser does not support the video tag.
                   </video>
                 </div>
@@ -169,7 +266,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                   </object>
 
                   <div className="chat-name">
-                    {message?.author.username}
+                    {message?.author?.username}
                     <div className="chat-hour">
                       {formatTimeAgo(message.timestamp)}
                     </div>
@@ -179,10 +276,21 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                   <button
                     className="chat-text"
                     type="submit"
-                    onClick={() => `${window.open(`${message.image}`)}`}
+                    onClick={() => `${window.open(`${message.files}`)}`}
+                    disabled={message.status === "Uploading"}
                   >
                     {message?.metadata.name}
                   </button>
+                  {selectedFile?.timestamp === message?.timestamp &&
+                    message.status === "Uploading" && (
+                      <>
+                        <ProgressBar
+                          animated
+                          now={progressBar?.percent}
+                          label={`${progressBar?.percent}%`}
+                        />
+                      </>
+                    )}
 
                   {/* <span className="chat-spacer"></span> */}
                 </div>
@@ -205,7 +313,7 @@ function ChatMessageList({ messages = [] }: ChatMessageListProps) {
                   </object>
 
                   <div className="chat-name">
-                    {message?.author.username}
+                    {message?.author?.username}
                     <div className="chat-hour">
                       {formatTimeAgo(message.timestamp)}
                     </div>
@@ -264,7 +372,7 @@ const ChatMessageListStyled = styled.div`
 
         &.chat-left {
           .chat-text {
-            color: #000
+            color: #000;
           }
         }
       }
@@ -305,6 +413,18 @@ const ChatMessageListStyled = styled.div`
       .chat-text-wrapper {
         background-color: #fff;
         padding: 0;
+      }
+    }
+    &.chat-videos {
+      .chat-text-wrapper {
+        background-color: transparent;
+        padding: 0;
+
+        video {
+          width: 100%;
+          max-width: 300px;
+          border-radius: 12px;
+        }
       }
     }
   }

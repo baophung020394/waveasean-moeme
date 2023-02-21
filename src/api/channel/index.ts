@@ -118,12 +118,11 @@ export const createChannel2 = (createChannel: any, user: any) => {
 };
 
 export const sendChannelMessage2 = (message: any, channelId: any) => {
-  return db.database().ref("messages").child(channelId).push().set(message);
-  // return db
-  //   .firestore()
-  //   .collection("channels")
-  //   .doc(channelId)
-  //   .collection("messages")
-  //   .doc(message.timestamp)
-  //   .set(message);
+  const messagesRef = db.database().ref("messages");
+  return messagesRef.child(channelId).push().set(message);
+};
+export const updateMessage = (message: any, channelId: any) => {
+  // return db.database().ref("messages").child(channelId).child().update({
+  //   image: "",
+  // });
 };

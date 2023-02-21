@@ -1,26 +1,12 @@
-import { sendChatMessage } from "actions/chat";
+import { sendChannelMessage2, uploadFiles } from "actions/channel";
 import ChatBar from "components/ChatBar";
 import ChatMessageList from "components/ChatMessageList";
-import ChatOptions from "components/ChatOptions";
 import Messanger from "components/Messanger";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import styled from "styled-components";
-
-import {
-  clearNotifications,
-  registerMessageSubscription,
-  sendChannelMessage,
-  sendChannelMessage2,
-  subscribeToChannel,
-  subscribeToMessages,
-  subscribeToProfile,
-} from "actions/channel";
 import LoadingView from "components/Spinner/LoadingView";
-import ChannelList from "components/ChannelList";
-import { withBaseLayout } from "layouts/Base";
 import firebase from "db/firestore";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 
 interface PrivateChatProps {
   user?: any;
@@ -29,12 +15,13 @@ interface PrivateChatProps {
 function PrivateChat({ user }: PrivateChatProps) {
   const dispatch: any = useDispatch();
   const currentChannel = useSelector(({ channel }) => channel.currentChannel);
-  const storageRef = firebase.storage().ref();
+  const userRedux = useSelector(({ auth }) => auth.user);
   const messageRef = firebase.database().ref("messages");
   const [messagesState, setMessagesState] = useState([]);
   const [searchTermState, setSearchTermState] = useState("");
+  const [progressBar, setProgressBar] = useState<any>({});
+  const [selectedFile, setSelectedFile] = useState<any>({});
 
-  console.log("Object.entries(user)", Object.values(user));
   const sendMessage = useCallback(
     (message) => {
       dispatch(sendChannelMessage2(message, user?.id));
@@ -42,20 +29,18 @@ function PrivateChat({ user }: PrivateChatProps) {
     [user?.id]
   );
 
-  const uploadFile = (data: any) => {
-    let newData = { ...data };
-    const filePath = `chat/files/${newData.idMessage}.${newData.metadata.type}`;
+  const uploadImage = (data: any) => {
+    const newData = { ...data };
+    newData.author = {
+      username: userRedux?.userId || userRedux.displayName,
+      id: userRedux?.uid,
+    };
+    newData.upload = 1;
+    newData.status = "Uploading";
+    messagesState.push(newData);
 
-    storageRef
-      .child(filePath)
-      .put(newData.files, { contentType: newData.fileType })
-      .then((data) => {
-        data.ref.getDownloadURL().then((url: string) => {
-          newData.image = url;
-          dispatch(sendChannelMessage2(newData, user?.id));
-        });
-      })
-      .catch((err) => console.log("err", err));
+    setSelectedFile(data);
+    dispatch(uploadFiles(data, user?.id, messagesState, perCentUploadSuccess));
   };
 
   useEffect(() => {
@@ -74,14 +59,14 @@ function PrivateChat({ user }: PrivateChatProps) {
   }, [user?.id]);
 
   const uniqueuUsersCount = () => {
-    const uniqueuUsers = messagesState.reduce((acc, message) => {
-      if (!acc.includes(message?.author.username)) {
-        acc.push(message?.author.username);
+    const uniqueuUsers = messagesState?.reduce((acc, message) => {
+      if (!acc.includes(message?.author?.username)) {
+        acc.push(message?.author?.username);
       }
       return acc;
     }, []);
 
-    return uniqueuUsers.length;
+    return uniqueuUsers?.length;
   };
 
   const searchTermChange = (searchTerm: any) => {
@@ -102,6 +87,28 @@ function PrivateChat({ user }: PrivateChatProps) {
     return messages;
   };
 
+  const perCentUploadSuccess = (statusProgress: any) => {
+    if (
+      statusProgress?.percent <= 100 &&
+      statusProgress?.status === "Uploading"
+    ) {
+      setProgressBar(statusProgress);
+    } else if (
+      statusProgress?.percent >= 100 &&
+      statusProgress?.status === "Done"
+    ) {
+      setMessagesState(
+        messagesState
+          ?.filter((_) => _?.idMessage !== statusProgress?.idMessage)
+          .map((x) =>
+            x?.idMessage === statusProgress?.idMessage
+              ? { ...x, files: statusProgress?.url, status: "Done" }
+              : x
+          )
+      );
+    }
+  };
+
   if (!currentChannel?.id) {
     return <LoadingView message="Loading Chat..." />;
   }
@@ -116,6 +123,9 @@ function PrivateChat({ user }: PrivateChatProps) {
         />
         <div className="chat--view__content__chat">
           <ChatMessageList
+            selectedFile={selectedFile}
+            progressBar={progressBar}
+            uploadFileProp={uploadImage}
             messages={
               searchTermState ? filterMessageBySearchTerm() : messagesState
             }
@@ -123,7 +133,7 @@ function PrivateChat({ user }: PrivateChatProps) {
           <Messanger
             onSubmit={sendMessage}
             channel={currentChannel}
-            uploadFileProp={uploadFile}
+            uploadFileProp={uploadImage}
           />
         </div>
       </div>

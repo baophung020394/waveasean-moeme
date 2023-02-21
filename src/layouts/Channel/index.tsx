@@ -9,7 +9,6 @@ import styled from "styled-components";
 interface ChannelProps {}
 
 function Channel() {
-  const profile = JSON.parse(localStorage.getItem("_profile"));
   const user = useSelector(({ auth }) => auth.user);
   const joinedChannels = useSelector(({ channel }) => channel.joined);
   const availableChannels = useSelector(({ channel }) => channel.available);

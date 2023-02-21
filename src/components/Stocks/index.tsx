@@ -57,7 +57,7 @@ function Stocks({ stocks }: Stocks) {
             <span className="stocks--bot__user__name">{stocks?.user.params.userName}</span>
           </div>
           <div className="stocks--bot__time">
-            <span>방장 2:30</span>
+            <span>방장 </span>
           </div>
         </div>
       </div>

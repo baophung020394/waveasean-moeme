@@ -19,6 +19,7 @@ import EmojiPicker, {
 import { v4 as uuidv4 } from "uuid";
 import { createTimestamp } from "utils/time";
 import { useSelector } from "react-redux";
+import { convertFiles } from "utils/handleFiles";
 
 interface MessangerProps {
   channel: any;
@@ -31,6 +32,7 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const textareaRef = useRef<any>(null);
   const user = JSON.parse(localStorage.getItem("_profile"));
+  const userRedux = useSelector(({ auth }) => auth.user);
 
   let myuuid = uuidv4();
 
@@ -51,51 +53,25 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
   /**
    *  This function will be triggered when the file field change
    * */
-  const imageChange = (e: any) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const image = e.target.files[0];
-      console.log({ image });
-      const metadata = {
-        type: image.type,
-        name: image.name,
-      };
-
-      const afterDot = image.name.substr(image.name.lastIndexOf(".") + 1);
-      console.log("dot", afterDot);
-      if (["video/mp4", "video/mp3"].includes(metadata.type)) {
-        metadata.type = image.type.replace("video/", "");
-      } else if (
-        ["image/png", "image/jpeg", "image/jpg"].includes(metadata.type)
-      ) {
-        metadata.type = image.type.replace("image/", "");
-      } else if (afterDot === "pptx") {
-        console.log("pptx");
-        metadata.type = "pptx";
-      } else if (afterDot === "docx") {
-        console.log("docx");
-        metadata.type = "docx";
-      } else if (afterDot === "xlsx") {
-        console.log("xlsx");
-        metadata.type = "xlsx";
-      } else if (afterDot === "mov") {
-        console.log("xlsx");
-        metadata.type = ".mov";
-      } else {
-        metadata.type = image.type.replace("application/", "");
-      }
-
-      console.log(metadata.type);
+  const uploadChange = (e: any) => {
+    console.log(e.target.files);
+    if (e.target.files) {
+      const file = e.target.files[0];
+      console.log("upload manual", file);
 
       let newMessage = {
         content: ``,
-        files: image,
+        files: file,
         idMessage: myuuid,
         user,
         timestamp: createTimestamp(),
-        fileType: image.type,
-        metadata,
+        fileType: file.type,
+        metadata: convertFiles(file),
+        author: {
+          username: userRedux?.userId || userRedux.displayName,
+          id: userRedux?.uid,
+        },
       };
-
       uploadFileProp(newMessage);
       // const reader = new FileReader();
 
@@ -111,6 +87,7 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
       //   fileType: e.target.files[0].type,
       // };
 
+      // reader.onloadend
       //   onSubmit(newMessage);
       // };
     }
@@ -163,6 +140,56 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
     }
   };
 
+  const dropHandler = (ev: any) => {
+    console.log("File(s) dropped");
+
+    // Prevent default behavior (Prevent file from being opened)
+    ev.preventDefault();
+
+    if (ev.dataTransfer.items) {
+      // Use DataTransferItemList interface to access the file(s)
+      [...ev.dataTransfer.items].forEach((item, i) => {
+        // If dropped items aren't files, reject them
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          console.log(`… file[${i}].name = ${file.name}`);
+          let newMessage = {
+            content: ``,
+            files: file,
+            idMessage: myuuid,
+            user,
+            timestamp: createTimestamp(),
+            fileType: file.type,
+            metadata: convertFiles(file),
+          };
+
+          uploadFileProp(newMessage);
+          textareaRef.current.style.border = "1px solid #e2e2e2";
+        }
+      });
+    } else {
+      // Use DataTransfer interface to access the file(s)
+      [...ev.dataTransfer.files].forEach((file, i) => {
+        console.log(`… file[${i}].name = ${file.name}`);
+        textareaRef.current.style.border = "1px solid #e2e2e2";
+      });
+    }
+  };
+
+  const dragOverHandler = (ev: any) => {
+    console.log("File(s) in drop zone");
+    textareaRef.current.style.border = "3px solid rgb(29 78 216)";
+    // Prevent default behavior (Prevent file from being opened)
+    ev.preventDefault();
+  };
+
+  const dragLeaveHandler = (ev: any) => {
+    console.log("File(s) in drop zone left");
+    textareaRef.current.style.border = "1px solid #e2e2e2";
+    // Prevent default behavior (Prevent file from being opened)
+    ev.preventDefault();
+  };
+
   /**
    * Check auto height of Textarea
    */
@@ -183,6 +210,9 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
         ref={textareaRef}
         onChange={(e) => setValue(e.target.value)}
         onKeyPress={onKeyPress}
+        onDrop={dropHandler}
+        onDragOver={dragOverHandler}
+        onDragLeave={dragLeaveHandler}
         value={value}
         className="form-control"
         placeholder={`${
@@ -204,7 +234,10 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
                 className="file-input"
                 id="file-input"
                 type="file"
-                onChange={imageChange}
+                onChange={(e) => {
+                  uploadChange(e);
+                  e.target.value = null;
+                }}
               />
             </div>
           </button>

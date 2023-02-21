@@ -292,6 +292,7 @@ export const createChannel2 =
 export const sendChannelMessage2 =
   (message: any, channelId: string) => (dispatch: any, getState: any) => {
     const newMessage = { ...message };
+    const messagesRef = db.database().ref("messages");
     const { user } = getState().auth;
     delete newMessage.author;
 
@@ -305,4 +306,97 @@ export const sendChannelMessage2 =
       .sendChannelMessage2(newMessage, channelId)
       .then(() => console.log("save mess success"))
       .catch((err) => console.log("err", err));
+  };
+
+export const updateMessage =
+  (message: any, channelId: string) => (dispatch: any, getState: any) => {
+    const newMessage = { ...message };
+
+    return api.updateMessage(newMessage, channelId);
+  };
+
+export const uploadFiles =
+  (data: any, idChannel: string, messages: any, perCentUploadFunc: any) =>
+  (dispatch: any) => {
+    const storageRef = db.storage().ref();
+    let newData = { ...data };
+
+    let perCentUpload: any;
+    const filePath = `chat/files/${newData.idMessage}.${newData.metadata.type}`;
+
+    return storageRef
+      .child(filePath)
+      .put(newData.files, { contentType: newData.fileType })
+      .on(
+        "state_changed",
+        (snap) => {
+          perCentUpload = Math.round(
+            (snap.bytesTransferred / snap.totalBytes) * 100
+          );
+          // console.log("percentUpload", perCentUpload);
+          // console.log({ newList });
+          perCentUploadFunc({
+            percent: perCentUpload,
+            status: "Uploading",
+            idMessage: newData.idMessage,
+            timestamp: newData.timestamp,
+          });
+        },
+        (err) => {
+          console.log("err", err);
+          // console.log("perCentUpload err", perCentUpload);
+          perCentUploadFunc({
+            percent: 0,
+            status: "Failed",
+            idMessage: newData.idMessage,
+            timestamp: newData.timestamp,
+          });
+        },
+        () => {
+          // console.log("vo day?");
+          // console.log("perCentUpload success", perCentUpload);
+
+          if (perCentUpload >= 100) {
+            storageRef
+              .child(filePath)
+              .getDownloadURL()
+              .then((url) => {
+                // delete newData.statusOfUpload;
+                newData.files = url;
+                perCentUploadFunc({
+                  percent: perCentUpload,
+                  status: "Done",
+                  idMessage: newData.idMessage,
+                  timestamp: newData.timestamp,
+                  url: url,
+                });
+                dispatch(sendChannelMessage2(newData, idChannel));
+              })
+              .catch((err) => {
+                console.log("err", err);
+                perCentUploadFunc({
+                  percent: 100,
+                  status: "Failed",
+                  idMessage: newData.idMessage,
+                  timestamp: newData.timestamp,
+                });
+              });
+          }
+        }
+      );
+    // .then((data) => {
+    //   console.log("data", data);
+    // const percentUpload = Math.round(
+    //   (data.bytesTransferred / data.totalBytes) * 100
+    // );
+    //   console.log("perCentUpload", percentUpload);
+    //   perCentUploadFunc(percentUpload);
+
+    //   data.ref.getDownloadURL().then((url: string) => {
+    //     console.log("url", url);
+    //     newData.image = url;
+    //     dispatch(sendChannelMessage2(newData, idChannel));
+    //   });
+    // })
+    // .catch((err) => console.log("err", err));
   };

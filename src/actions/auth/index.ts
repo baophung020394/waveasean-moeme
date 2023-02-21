@@ -17,7 +17,32 @@ export const login = (formData: Auth) => (dispatch: any) => {
       });
     })
     .catch((error) => {
-      dispatch({ type: "AUTH_LOGIN_ERROR", error });
+      dispatch({
+        type: "AUTH_LOGIN_ERROR",
+        error: { message: "User not exists" },
+      });
+      logout();
+    });
+};
+
+export const registerUser = (formData: Auth) => (dispatch: any) => {
+  dispatch({
+    type: "AUTH_REGISTER_INIT",
+  });
+  return api
+    .register(formData)
+    .then((user: any) => {
+      console.log("user register", user);
+      setUser(user);
+     
+      return dispatch({
+        type: "AUTH_REGISTER_SUCCESS",
+        user: user,
+      });
+    })
+    .catch((error) => {
+      console.log("error", error);
+      dispatch({ type: "AUTH_REGISTER_ERROR", error });
       logout();
     });
 };

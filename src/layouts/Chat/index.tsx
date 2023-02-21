@@ -16,6 +16,7 @@ import {
   subscribeToChannel,
   subscribeToMessages,
   subscribeToProfile,
+  uploadFiles,
 } from "actions/channel";
 import LoadingView from "components/Spinner/LoadingView";
 import ChannelList from "components/ChannelList";
@@ -27,56 +28,22 @@ interface ChatProps {}
 function Chat({}: ChatProps) {
   const { id }: any = useParams();
   const dispatch: any = useDispatch();
-  const peopleWatchers: any = useRef({});
-  const activeChannel = useSelector(
-    ({ channel }) => channel.activeChannels[id]
-  );
+  const [progressBar, setProgressBar] = useState<any>({});
+  const [selectedFile, setSelectedFile] = useState<any>({});
+  // const peopleWatchers: any = useRef({});
+  // const activeChannel = useSelector(
+  //   ({ channel }) => channel.activeChannels[id]
+  // );
   const joinedChannels = useSelector(({ channel }) => channel.joined);
-  const messages = useSelector(({ channel }) => channel.messages[id]);
-  const messageSubs = useSelector(({ channel }) => channel.messageSubs[id]);
-  const joinedUsers = activeChannel?.joinedUsers;
+  const userRedux = useSelector(({ auth }) => auth.user);
+  // const messages = useSelector(({ channel }) => channel.messages[id]);
+  // const messageSubs = useSelector(({ channel }) => channel.messageSubs[id]);
+  // const joinedUsers = activeChannel?.joinedUsers;
 
-  const storageRef = firebase.storage().ref();
   const messageRef = firebase.database().ref("messages");
   const [messagesState, setMessagesState] = useState([]);
   const [searchTermState, setSearchTermState] = useState("");
   const currentChannel = useSelector(({ channel }) => channel?.currentChannel);
-  // useEffect(() => {
-  //   const unsubFromChannel = dispatch(subscribeToChannel(id));
-
-  //   if (!messageSubs) {
-  //     const unsubFromMessages = dispatch(subscribeToMessages(id));
-  //     dispatch(registerMessageSubscription(id, unsubFromMessages));
-  //   }
-
-  //   return () => {
-  //     unsubFromChannel();
-  //     unsubFromJoinedUsers();
-  //   };
-  // }, [id]);
-
-  // useEffect(() => {
-  //   joinedUsers && subscribeToJoinedUsers(joinedUsers);
-  // }, [joinedUsers]);
-
-  // const subscribeToJoinedUsers = useCallback(
-  //   (JUsers) => {
-  //     JUsers.forEach((user: any) => {
-  //       if (!peopleWatchers.current[user.uid]) {
-  //         peopleWatchers.current[user.uid] = dispatch(
-  //           subscribeToProfile(user.uid, id)
-  //         );
-  //       }
-  //     });
-  //   },
-  //   [dispatch, id]
-  // );
-
-  // const unsubFromJoinedUsers = useCallback(() => {
-  //   Object.keys(peopleWatchers.current).forEach((id) =>
-  //     peopleWatchers.current[id]()
-  //   );
-  // }, [peopleWatchers.current]);
 
   const sendMessage = useCallback(
     (message) => {
@@ -85,21 +52,42 @@ function Chat({}: ChatProps) {
     [id]
   );
 
-  const uploadImage = (data: any) => {
-    let newData = { ...data };
-    console.log({newData})
-    const filePath = `chat/files/${newData.idMessage}.${newData.metadata.type}`;
+  const perCentUploadSuccess = (statusProgress: any) => {
+    if (
+      statusProgress?.percent <= 100 &&
+      statusProgress?.status === "Uploading"
+    ) {
+      setProgressBar(statusProgress);
+    } else if (
+      statusProgress?.percent >= 100 &&
+      statusProgress?.status === "Done"
+    ) {
+      setMessagesState(
+        messagesState
+          ?.filter((_) => _?.idMessage !== statusProgress?.idMessage)
+          .map((x) =>
+            x?.idMessage === statusProgress?.idMessage
+              ? { ...x, files: statusProgress?.url, status: "Done" }
+              : x
+          )
+      );
+    }
+  };
 
-    storageRef
-      .child(filePath)
-      .put(newData.files, { contentType: newData.fileType })
-      .then((data) => {
-        data.ref.getDownloadURL().then((url: string) => {
-          newData.image = url;
-          dispatch(sendChannelMessage2(newData, id));
-        });
-      })
-      .catch((err) => console.log("err", err));
+  // console.log({ messagesState });
+
+  const uploadImage = (data: any) => {
+    // console.log("uploadImage", data);
+    const newData = { ...data };
+    newData.author = {
+      username: userRedux?.userId || userRedux.displayName,
+      id: userRedux?.uid,
+    };
+    newData.upload = 1;
+    newData.status = "Uploading";
+    messagesState.push(newData);
+    setSelectedFile(data);
+    dispatch(uploadFiles(data, id, messagesState, perCentUploadSuccess));
   };
 
   useEffect(() => {
@@ -118,14 +106,14 @@ function Chat({}: ChatProps) {
   }, [id]);
 
   const uniqueuUsersCount = () => {
-    const uniqueuUsers = messagesState.reduce((acc, message) => {
-      if (!acc.includes(message?.author.username)) {
-        acc.push(message?.author.username);
+    const uniqueuUsers = messagesState?.reduce((acc, message) => {
+      if (!acc.includes(message?.author?.username)) {
+        acc.push(message?.author?.username);
       }
       return acc;
     }, []);
 
-    return uniqueuUsers.length;
+    return uniqueuUsers?.length;
   };
 
   const searchTermChange = (searchTerm: any) => {
@@ -173,6 +161,9 @@ function Chat({}: ChatProps) {
         />
         <div className="chat--view__content__chat">
           <ChatMessageList
+            selectedFile={selectedFile}
+            progressBar={progressBar}
+            uploadFileProp={uploadImage}
             messages={
               searchTermState ? filterMessageBySearchTerm() : messagesState
             }

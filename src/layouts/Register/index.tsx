@@ -4,15 +4,15 @@ import { useForm } from "react-hook-form";
 import { Link, Redirect, useHistory } from "react-router-dom";
 import LogoWave from "assets/images/logo/logo_aveapp.png";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "actions/auth";
+import { login, registerUser } from "actions/auth";
 import { Auth } from "models/auth";
 import LoadingView from "components/Spinner/LoadingView";
 import Button from "components/common/Header/Button";
 import { createChannel } from "actions/channel";
 
-interface LoginProps {}
+interface RegisterProps {}
 
-function Login({}: LoginProps) {
+function Register({}: RegisterProps) {
   const dispatch: any = useDispatch();
   const { register, handleSubmit } = useForm();
   const error = useSelector(({ auth }) => auth.login.error);
@@ -20,7 +20,7 @@ function Login({}: LoginProps) {
   const user = useSelector(({ auth }) => auth.user);
 
   const obSubmit = (data: Auth) => {
-    dispatch(login(data));
+    dispatch(registerUser(data));
   };
 
   if (isChecking) {
@@ -35,7 +35,7 @@ function Login({}: LoginProps) {
     <LoginStyled className="login-view">
       <div className="login--box">
         <form onSubmit={handleSubmit(obSubmit)} className="login--box__form">
-          <h1>Login</h1>
+          <h1>Register</h1>
           <div className="form--inputs">
             <div className="form--inputs__input userid">
               <input
@@ -53,11 +53,6 @@ function Login({}: LoginProps) {
             </div>
           </div>
 
-          {/* {user !== null && user?.result !== "success" && (
-            <div className="alert alert-danger small" style={{ marginTop: 48 }}>
-              {user?.result}
-            </div>
-          )} */}
           {error && (
             <div className="alert alert-danger small">{error.message}</div>
           )}
@@ -65,18 +60,18 @@ function Login({}: LoginProps) {
           <div className="btn-options">
             <Button
               type="submit"
-              name="Login"
+              name="Register"
               className="btn-login"
               inputColor={isChecking ? "" : "primary"}
             >
-              Login
+              Register
             </Button>
           </div>
         </form>
 
         <div className="forgot-options">
-          <Link to="/register">userid searching</Link>
-          <Link to="/register">PW searching</Link>
+          <Link to="/login">userid searching</Link>
+          <Link to="/login">PW searching</Link>
         </div>
 
         <div className="footer-copyright">
@@ -203,4 +198,4 @@ const LoginStyled = styled.div`
   }
 `;
 
-export default Login;
+export default Register;
