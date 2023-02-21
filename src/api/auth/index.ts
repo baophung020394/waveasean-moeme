@@ -39,44 +39,51 @@ export const login = async ({ userId, userPassword }: Auth) => {
   setUser(resLogin);
 
   const dataFirebase = { ...resLogin };
-  dataFirebase.email = `${data.params.userId}@gmail.com`;
-  dataFirebase.password = `${data.params.userPassword}56`;
 
+  console.log({ resLogin });
   if (resLogin?.result === "user not found") {
-    const loginFireBaseRes = await loginFirebase(dataFirebase);
-    return loginFireBaseRes;
+    dataFirebase.email = `${data.params.userId}@gmail.com`;
+    dataFirebase.password = `${data.params.userPassword}56`;
   } else {
-    const listUsers = await fetchUsers();
+    console.log("user ton tai");
+    dataFirebase.email = `${data.params.userId}@gmail.com`;
+    dataFirebase.password = `${data.params.userPassword}56`;
 
-    const dupUser = listUsers.filter(
-      (user: any) => user.email === dataFirebase.email
-    );
+    // const listUsers = await fetchUsers();
 
-    const { user } = await firebase
-      .auth()
-      .createUserWithEmailAndPassword(
-        dataFirebase.email,
-        dataFirebase.password
-      );
+    // const dupUser = listUsers.filter(
+    //   (user: any) => user.email === dataFirebase.email
+    // );
 
-    const userProfileRegister: any = {
-      userId: data.params.userId || userId,
-      uid: user.uid || myuuid,
-      username: data.params.userId || userId,
-      email: dataFirebase.email,
-      avatar: resLogin?.params.profile_image || "",
-      atk: resLogin?.params.atk || myuuid,
-      rtk: resLogin?.params.rtk || myuuid,
-      joinedChannels: [],
-    };
+    // console.log({ dupUser });
+    // const { user } = await firebase
+    //   .auth()
+    //   .createUserWithEmailAndPassword(
+    //     dataFirebase.email,
+    //     dataFirebase.password
+    //   );
 
-    await createUserProfile(userProfileRegister);
-    await createUser(userProfileRegister);
+    // console.log({ user });
 
-    if (dupUser.length > 0) {
-      const loginFireBaseRes = await loginFirebase(dataFirebase);
-      return loginFireBaseRes;
-    }
+    // const userProfileRegister: any = {
+    //   userId: data.params.userId || userId,
+    //   uid: user.uid || myuuid,
+    //   username: data.params.userId || userId,
+    //   email: dataFirebase.email,
+    //   avatar: resLogin?.params.profile_image || "",
+    //   atk: resLogin?.params.atk || myuuid,
+    //   rtk: resLogin?.params.rtk || myuuid,
+    //   joinedChannels: [],
+    // };
+
+    // await createUserProfile(userProfileRegister);
+    // await createUser(userProfileRegister);
+
+    // if (dupUser.length > 0) {
+    //   console.log("dupUser");
+    //   const loginFireBaseRes = await loginFirebase(dataFirebase);
+    //   return loginFireBaseRes;
+    // }
 
     const loginFireBaseRes = await loginFirebase(dataFirebase);
     return loginFireBaseRes;
@@ -84,6 +91,8 @@ export const login = async ({ userId, userPassword }: Auth) => {
 };
 
 export const loginFirebase = async ({ email, password }: any) => {
+  console.log("email", email);
+  console.log("password", password);
   const { user } = await firebase
     .auth()
     .signInWithEmailAndPassword(email, password);

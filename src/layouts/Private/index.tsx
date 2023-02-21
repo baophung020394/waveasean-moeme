@@ -115,7 +115,7 @@ function Private() {
                   className="icon40 avatar"
                 />
               </object>
-              {u?.userId}
+              <span>{u?.userId}</span>
             </div>
             <div className="status-user">
               {connectedUserState.indexOf(u.id) !== -1 ? (

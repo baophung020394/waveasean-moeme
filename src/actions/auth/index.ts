@@ -17,9 +17,10 @@ export const login = (formData: Auth) => (dispatch: any) => {
       });
     })
     .catch((error) => {
+      console.log({error})
       dispatch({
         type: "AUTH_LOGIN_ERROR",
-        error: { message: "User not exists" },
+        error: { message: error.message },
       });
       logout();
     });
