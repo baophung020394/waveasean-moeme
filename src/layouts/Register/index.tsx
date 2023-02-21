@@ -1,26 +1,64 @@
-import React, { useEffect } from "react";
-import styled from "styled-components";
-import { useForm } from "react-hook-form";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { registerUser } from "actions/auth";
 import LogoWave from "assets/images/logo/logo_aveapp.png";
-import { useDispatch, useSelector } from "react-redux";
-import { login, registerUser } from "actions/auth";
-import { Auth } from "models/auth";
-import LoadingView from "components/Spinner/LoadingView";
 import Button from "components/common/Header/Button";
-import { createChannel } from "actions/channel";
+import LoadingView from "components/Spinner/LoadingView";
+import firebase from "db/firestore";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Redirect } from "react-router-dom";
+import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
+
 
 interface RegisterProps {}
 
 function Register({}: RegisterProps) {
   const dispatch: any = useDispatch();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, getFieldState, getValues } = useForm();
   const error = useSelector(({ auth }) => auth.login.error);
   const isChecking = useSelector(({ auth }) => auth.login.isChecking);
   const user = useSelector(({ auth }) => auth.user);
+  let myuuid = uuidv4();
+  const updateuserDetails = (createdUser: any) => {
+    if (createdUser) {
+      createdUser.user
+        .updateProfile({
+          displayName: getValues("username"),
+          photoURL: `http://gravatar.com/avatar/${createdUser.user.uid}?d=identicon`,
+        })
+        .then(() => {
+          const profile = {
+            displayName: getValues("username"),
+            photoURL: `http://gravatar.com/avatar/${createdUser.user.uid}?d=identicon`,
+            uid: createdUser.user.uid,
+            username: getValues("username"),
+            userId: getValues("userId"),
+            email: createdUser.user.email,
+            avatar: "",
+            atk: myuuid,
+          };
+          dispatch(registerUser(createdUser, profile));
+        })
+        .catch((serverError: any) => {
+          console.log("error", serverError);
+        });
+    }
+  };
 
-  const obSubmit = (data: Auth) => {
-    dispatch(registerUser(data));
+  const obSubmit = (data: any) => {
+    console.log({ data });
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(data.email, data.password)
+      .then((createdUser) => {
+        console.log("createdUser", createdUser);
+        updateuserDetails(createdUser);
+      })
+      .catch((serverError) => {
+        console.log("error", serverError);
+      });
+    // dispatch(registerUser(data));
   };
 
   if (isChecking) {
@@ -39,14 +77,28 @@ function Register({}: RegisterProps) {
           <div className="form--inputs">
             <div className="form--inputs__input userid">
               <input
+                {...register("email")}
+                type="email"
+                placeholder="Enter the email"
+              />
+            </div>
+            <div className="form--inputs__input userid">
+              <input
                 {...register("userId")}
                 type="text"
                 placeholder="Enter the userid"
               />
             </div>
+            <div className="form--inputs__input userid">
+              <input
+                {...register("username")}
+                type="text"
+                placeholder="Enter the username"
+              />
+            </div>
             <div className="form--inputs__input password">
               <input
-                {...register("userPassword")}
+                {...register("password")}
                 type="password"
                 placeholder="Enter the password"
               />

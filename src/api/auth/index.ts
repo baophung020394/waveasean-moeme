@@ -23,71 +23,72 @@ export const getUserProfile = (uid: string) =>
     .get()
     .then((snapshot) => snapshot.data());
 
-export const login = async ({ userId, userPassword }: Auth) => {
-  const url = "/00010001";
-  const data = {
-    params: {
-      deviceType: "web",
-      userId: userId,
-      userPassword: userPassword,
-    },
-  };
-  let myuuid = uuidv4();
+export const login = async ({ email, password }: any) => {
+  return db.auth().signInWithEmailAndPassword(email, password);
+  // const url = "/00010001";
+  // const data = {
+  //   params: {
+  //     deviceType: "web",
+  //     userId: userId,
+  //     userPassword: userPassword,
+  //   },
+  // };
+  // let myuuid = uuidv4();
 
-  const resLogin: any = await axiosClient.post(url, JSON.stringify(data));
+  // const resLogin: any = await axiosClient.post(url, JSON.stringify(data));
 
-  setUser(resLogin);
+  // setUser(resLogin);
 
-  const dataFirebase = { ...resLogin };
+  // const dataFirebase = { ...resLogin };
 
-  console.log({ resLogin });
-  if (resLogin?.result === "user not found") {
-    dataFirebase.email = `${data.params.userId}@gmail.com`;
-    dataFirebase.password = `${data.params.userPassword}56`;
-  } else {
-    console.log("user ton tai");
-    dataFirebase.email = `${data.params.userId}@gmail.com`;
-    dataFirebase.password = `${data.params.userPassword}56`;
+  // console.log({ resLogin });
+  // if (resLogin?.result === "user not found") {
+  //   dataFirebase.email = `${data.params.userId}@gmail.com`;
+  //   dataFirebase.password = `${data.params.userPassword}`;
+  // } else {
+  //   console.log("user ton tai");
+  //   dataFirebase.email = `${data.params.userId}@gmail.com`;
+  //   dataFirebase.password = `${data.params.userPassword}56`;
 
-    // const listUsers = await fetchUsers();
+  // const listUsers = await fetchUsers();
 
-    // const dupUser = listUsers.filter(
-    //   (user: any) => user.email === dataFirebase.email
-    // );
+  // const dupUser = listUsers.filter(
+  //   (user: any) => user.email === dataFirebase.email
+  // );
 
-    // console.log({ dupUser });
-    // const { user } = await firebase
-    //   .auth()
-    //   .createUserWithEmailAndPassword(
-    //     dataFirebase.email,
-    //     dataFirebase.password
-    //   );
+  // console.log({ dupUser });
+  // const { user } = await firebase
+  //   .auth()
+  //   .createUserWithEmailAndPassword(
+  //     dataFirebase.email,
+  //     dataFirebase.password
+  //   );
 
-    // console.log({ user });
+  // console.log({ user });
 
-    // const userProfileRegister: any = {
-    //   userId: data.params.userId || userId,
-    //   uid: user.uid || myuuid,
-    //   username: data.params.userId || userId,
-    //   email: dataFirebase.email,
-    //   avatar: resLogin?.params.profile_image || "",
-    //   atk: resLogin?.params.atk || myuuid,
-    //   rtk: resLogin?.params.rtk || myuuid,
-    //   joinedChannels: [],
-    // };
+  // const userProfileRegister: any = {
+  //   userId: data.params.userId || userId,
+  //   uid: user.uid || myuuid,
+  //   username: data.params.userId || userId,
+  //   email: dataFirebase.email,
+  //   avatar: resLogin?.params.profile_image || "",
+  //   atk: resLogin?.params.atk || myuuid,
+  //   rtk: resLogin?.params.rtk || myuuid,
+  //   joinedChannels: [],
+  // };
 
-    // await createUserProfile(userProfileRegister);
-    // await createUser(userProfileRegister);
+  // await createUserProfile(userProfileRegister);
+  // await createUser(userProfileRegister);
 
-    // if (dupUser.length > 0) {
-    //   console.log("dupUser");
-    //   const loginFireBaseRes = await loginFirebase(dataFirebase);
-    //   return loginFireBaseRes;
-    // }
+  // if (dupUser.length > 0) {
+  //   console.log("dupUser");
+  //   const loginFireBaseRes = await loginFirebase(dataFirebase);
+  //   return loginFireBaseRes;
+  // }
 
-    const loginFireBaseRes = await loginFirebase(dataFirebase);
-    return loginFireBaseRes;
-  }
+  // const loginFireBaseRes = await loginFirebase(dataFirebase);
+  // return loginFireBaseRes;
+  // }
 };
 
 export const loginFirebase = async ({ email, password }: any) => {
@@ -151,19 +152,33 @@ export const register = async ({ userId, userPassword }: Auth) => {
     joinedChannels: [],
   };
   await createUserProfile(userProfileRegister);
-  await createUser(userProfileRegister);
+
+  // await createUser(userProfileRegister);
   const loginFireBaseRes = await loginFirebase(dataFirebase);
   return loginFireBaseRes;
 };
 
 /** Test auth 2 */
-export const createUser = (userProfileRegister: any) => {
+export const createUser = (userProfileRegister: any, profile: any) => {
   console.log({ userProfileRegister });
-  return db
-    .database()
-    .ref("users")
-    .child(userProfileRegister.uid)
-    .set(userProfileRegister)
-    .then((user) => console.log("saved user", user))
-    .catch((err) => console.log("err", err));
+  console.log({ profile });
+  const userRef = db.database().ref("users");
+  setUser(profile);
+  return userRef.child(userProfileRegister.user.uid).set({
+    displayName: profile.displayName,
+    photoURL: profile.photoURL,
+    uid: profile.uid,
+    username: profile?.username,
+    userId: profile.userId,
+    email: profile.email,
+    atk: profile.atk,
+    avatar: "",
+  });
+  // return db
+  //   .database()
+  //   .ref("users")
+  //   .child(userProfileRegister.uid)
+  //   .set(userProfileRegister)
+  //   .then((user) => console.log("saved user", user))
+  //   .catch((err) => console.log("err", err));
 };

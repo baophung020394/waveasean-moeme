@@ -19,7 +19,7 @@ function Login({}: LoginProps) {
   const isChecking = useSelector(({ auth }) => auth.login.isChecking);
   const user = useSelector(({ auth }) => auth.user);
 
-  const obSubmit = (data: Auth) => {
+  const obSubmit = (data: any) => {
     dispatch(login(data));
   };
 
@@ -39,14 +39,14 @@ function Login({}: LoginProps) {
           <div className="form--inputs">
             <div className="form--inputs__input userid">
               <input
-                {...register("userId")}
-                type="text"
-                placeholder="Enter the userid"
+                {...register("email")}
+                type="email"
+                placeholder="Enter the email"
               />
             </div>
             <div className="form--inputs__input password">
               <input
-                {...register("userPassword")}
+                {...register("password")}
                 type="password"
                 placeholder="Enter the password"
               />

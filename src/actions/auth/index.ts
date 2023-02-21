@@ -17,7 +17,7 @@ export const login = (formData: Auth) => (dispatch: any) => {
       });
     })
     .catch((error) => {
-      console.log({error})
+      console.log({ error });
       dispatch({
         type: "AUTH_LOGIN_ERROR",
         error: { message: error.message },
@@ -26,27 +26,23 @@ export const login = (formData: Auth) => (dispatch: any) => {
     });
 };
 
-export const registerUser = (formData: Auth) => (dispatch: any) => {
-  dispatch({
-    type: "AUTH_REGISTER_INIT",
-  });
-  return api
-    .register(formData)
-    .then((user: any) => {
-      console.log("user register", user);
-      setUser(user);
-     
-      return dispatch({
-        type: "AUTH_REGISTER_SUCCESS",
-        user: user,
-      });
-    })
-    .catch((error) => {
-      console.log("error", error);
-      dispatch({ type: "AUTH_REGISTER_ERROR", error });
-      logout();
+export const registerUser =
+  (formData: any, profile: any) => (dispatch: any) => {
+    console.log({ formData });
+    dispatch({
+      type: "AUTH_REGISTER_INIT",
     });
-};
+    return api
+      .createUser(formData, profile)
+      .then(() => {
+        console.log("user register success");
+      })
+      .catch((error) => {
+        console.log("error", error);
+        dispatch({ type: "AUTH_REGISTER_ERROR", error });
+        logout();
+      });
+  };
 
 // export const loginFirebase = (formData: any) => (dispatch: any) => {
 //   dispatch({

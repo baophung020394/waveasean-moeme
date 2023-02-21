@@ -119,7 +119,7 @@ function ChatMessageList({
                 <div className="chat-avatar">
                   <object
                     className="icon40 avatar"
-                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.stocks?.user.params.userId}&roomid=${message?.stocks.user?.roomId}`}
+                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.stocks?.user.userId}&roomid=${message?.stocks.user?.roomId}`}
                     type="image/png"
                   >
                     <img
@@ -152,7 +152,7 @@ function ChatMessageList({
                 <div className="chat-avatar">
                   <object
                     className="icon40 avatar"
-                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.params.userId}&roomid=${message?.user?.roomId}`}
+                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.userId}&roomid=${message?.user?.roomId}`}
                     type="image/png"
                   >
                     <img
@@ -200,7 +200,7 @@ function ChatMessageList({
                 <div className="chat-avatar">
                   <object
                     className="icon40 avatar"
-                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.params.userId}&roomid=${message?.user?.roomId}`}
+                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.userId}&roomid=${message?.user?.roomId}`}
                     type="image/png"
                   >
                     <img
@@ -255,7 +255,7 @@ function ChatMessageList({
                 <div className="chat-avatar">
                   <object
                     className="icon40 avatar"
-                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.params.userId}&roomid=${message?.roomId}`}
+                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.userId}&roomid=${message?.roomId}`}
                     type="image/png"
                   >
                     <img
@@ -302,7 +302,7 @@ function ChatMessageList({
                 <div className="chat-avatar">
                   <object
                     className="icon40 avatar"
-                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.params.userId}&roomid=${message?.roomId}`}
+                    data={`http://moa.aveapp.com:21405/file/api/down_proc.jsp?type=12&userid=${message?.user.userId}&roomid=${message?.roomId}`}
                     type="image/png"
                   >
                     <img
