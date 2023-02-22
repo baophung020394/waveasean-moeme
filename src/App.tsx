@@ -22,7 +22,6 @@ import StoreProvider from "store/StoreProvider";
 import styled from "styled-components";
 import Header from "./components/common/Header";
 import PushNotification from "components/PushNotification";
-import firebase, { messaging } from "db/firestore";
 import { getToken } from "firebase/messaging";
 
 export const AuthRoute = ({ children, ...rest }: any) => {
@@ -62,24 +61,24 @@ function MoeMe() {
   const [show, setShow] = useState(false);
   const [notification, setNotification] = useState({ title: "", body: "" });
 
-  async function requestPermission() {
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      // Generate Token
-      const token = await getToken(messaging, {
-        vapidKey:
-          "BHQ0O7j9_SRP-uAwDv6p1_B0o-Thwt5SMhMD74sAbbVsfYmeCFZNzfhV6GikSsXhDacUz7arpskzaAqNRteoyJM",
-      });
-      console.log("Token Gen", token);
-      // Send this token  to server ( db)
-    } else if (permission === "denied") {
-      alert("You denied for the notification");
-    }
-  }
-  useEffect(() => {
-    // Req user for notification permission
-    requestPermission();
-  }, []);
+  // async function requestPermission() {
+  //   const permission = await Notification.requestPermission();
+  //   if (permission === "granted") {
+  //     // Generate Token
+  //     const token = await getToken(messaging, {
+  //       vapidKey:
+  //         "BHQ0O7j9_SRP-uAwDv6p1_B0o-Thwt5SMhMD74sAbbVsfYmeCFZNzfhV6GikSsXhDacUz7arpskzaAqNRteoyJM",
+  //     });
+  //     console.log("Token Gen", token);
+  //     // Send this token  to server ( db)
+  //   } else if (permission === "denied") {
+  //     alert("You denied for the notification");
+  //   }
+  // }
+  // useEffect(() => {
+  //   // Req user for notification permission
+  //   requestPermission();
+  // }, []);
 
   useEffect(() => {
     const unsubFromAuth = dispatch(listenToAuthChanges());
@@ -104,7 +103,7 @@ function MoeMe() {
   return (
     <Router>
       <Header />
-      {/* <PushNotification /> */}
+      <PushNotification />
       <ContentWrapper>
         <Switch>
           <Route path="/login">
