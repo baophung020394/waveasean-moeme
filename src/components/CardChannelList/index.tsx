@@ -1,4 +1,8 @@
-import { clearNotifications, setCurrentChannel } from "actions/channel";
+import {
+  clearNotifications,
+  joinChannel,
+  setCurrentChannel,
+} from "actions/channel";
 import ORGIcon from "assets/images/icon/ORG.png";
 import PERIcon from "assets/images/icon/PER.png";
 import SPLIcon from "assets/images/icon/SPL.png";
@@ -75,12 +79,26 @@ function CardChannelList({
 
   const onChooseChannel = async (channel: any) => {
     setChannel(channel);
+
+    // askForConfirmtionNewChannel(channel);
     if (currentChannel) {
       setLastVisited(user, currentChannel);
       setLastVisited(user, channel);
       dispatch(setCurrentChannel(channel));
     }
     history.push(`/channel-detail/${channel?.id}`);
+  };
+
+  const askForConfirmtionNewChannel = (channel: any) => {
+    const isConfirming = confirm(
+      `Do you want to join channel: ${channel.room_name}`
+    );
+
+    if (isConfirming) {
+      dispatch(joinChannel(channel, user));
+    } else {
+      dispatch({ type: "CHANNELS_JOIN_FAIL" });
+    }
   };
 
   const setLastVisited = (user: any, channel: any) => {
@@ -129,7 +147,7 @@ function CardChannelList({
               {renderChannelType(channel?.chnl_type)}
             </div>
           </div>
-          
+
           <Notification
             userProps={user}
             channel={currentChannel}

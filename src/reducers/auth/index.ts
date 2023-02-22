@@ -50,8 +50,6 @@ function createAuthReducer() {
     isChecking: createIsFetchingReducer("AUTH_ON"),
     login: createLoginReducer(),
     register: createRegisterReducer(),
-    // logout: logoutReducer("AUTH_LOGOUT"),
-    // register: createRegisterReducer(),
   });
 }
 

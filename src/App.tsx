@@ -10,7 +10,7 @@ import LoginView from "layouts/Login";
 import PrivateView from "layouts/Private";
 import ProfileView from "layouts/Profile";
 import SettingsView from "layouts/Settings";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   HashRouter as Router,
@@ -21,6 +21,8 @@ import {
 import StoreProvider from "store/StoreProvider";
 import styled from "styled-components";
 import Header from "./components/common/Header";
+import PushNotification from "components/PushNotification";
+import { onMessageListener } from "db/firestore";
 
 export const AuthRoute = ({ children, ...rest }: any) => {
   const user = useSelector(({ auth }) => auth.user);
@@ -56,6 +58,19 @@ function MoeMe() {
   const dispatch: any = useDispatch();
   const isOnline = useSelector(({ app }) => app.isOnline);
   const isChecking = useSelector(({ auth }) => auth.isChecking);
+  const [show, setShow] = useState(false);
+  const [notification, setNotification] = useState({ title: "", body: "" });
+  onMessageListener()
+    .then((payload: any) => {
+      console.log({ payload });
+      setShow(true);
+      setNotification({
+        title: payload.notification.title,
+        body: payload.notification.body,
+      });
+      console.log(payload);
+    })
+    .catch((err:any) => console.log("failed: ", err));
 
   useEffect(() => {
     const unsubFromAuth = dispatch(listenToAuthChanges());
@@ -66,17 +81,6 @@ function MoeMe() {
       unsubFromConnection();
     };
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   let unsubFromUserConnection: any;
-  //   if (user?.uid) {
-  //     unsubFromUserConnection = dispatch(checkUserConnection(user.uid));
-  //   }
-
-  //   return () => {
-  //     unsubFromUserConnection && unsubFromUserConnection();
-  //   };
-  // }, [dispatch, user]);
 
   if (!isOnline) {
     return (
@@ -91,6 +95,7 @@ function MoeMe() {
   return (
     <Router>
       <Header />
+      <PushNotification />
       <ContentWrapper>
         <Switch>
           <Route path="/login">

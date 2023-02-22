@@ -76,14 +76,9 @@ export const subscribeToChannel = (channelId: string) => (dispatch: any) =>
   });
 
 export const joinChannel =
-  (channel: any, uid: string) => (dispatch: any, getState: any) => {
-    const newChannel = { ...channel };
-    const { user } = getState().auth;
-    const userRef = db.firestore().doc(`profiles/${user.uid}`);
-    newChannel.author = userRef;
-
-    return api.joinChannel(uid, channel?.id).then((channelId) => {
-      dispatch({ type: "CHANNELS_JOIN_SUCCESS", newChannel });
+  (channel: any, user: any) => (dispatch: any, getState: any) => {
+    return api.joinChannel(user, channel?.id).then((channelId) => {
+      dispatch({ type: "CHANNELS_JOIN_SUCCESS" });
     });
   };
 
@@ -253,9 +248,13 @@ export const registerMessageSubscription = (
   channelId,
 });
 
-export const setCurrentChannel = (channel: any) => (dispatch: any) => {
-  return dispatch({ type: "SET_CHANNEL_CURRENT", channel });
-};
+export const setCurrentChannel =
+  (channel: any) => (dispatch: any, getState: any) => {
+    const { user } = getState().auth;
+    // dispatch(joinChannel(channel, user));
+    api.joinChannel(user, channel?.id);
+    return dispatch({ type: "SET_CHANNEL_CURRENT", channel });
+  };
 
 export const setNotification = (notificationChnl: any) => (dispatch: any) => {
   return dispatch({ type: "SET_NOTIFICATIONS", notificationChnl });

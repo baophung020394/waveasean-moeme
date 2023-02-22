@@ -21,6 +21,8 @@ function PrivateChat({ user }: PrivateChatProps) {
   const [searchTermState, setSearchTermState] = useState("");
   const [progressBar, setProgressBar] = useState<any>({});
   const [selectedFile, setSelectedFile] = useState<any>({});
+  const userJoinedRef = firebase.database().ref("users");
+  const [joinedUsersState, setJoinedUsersState] = useState<any>([]);
 
   const sendMessage = useCallback(
     (message) => {
@@ -109,6 +111,20 @@ function PrivateChat({ user }: PrivateChatProps) {
     }
   };
 
+  useEffect(() => {
+    if (user?.id) {
+      let list: any = [];
+      userJoinedRef
+        .child(user?.id)
+        .child("joinedUsers")
+        .on("child_added", (snap) => {
+          console.log("snap.val()", snap.val());
+          list.push(snap.val());
+        });
+      setJoinedUsersState(list);
+    }
+  }, [user?.id]);
+
   if (!currentChannel?.id) {
     return <LoadingView message="Loading Chat..." />;
   }
@@ -131,6 +147,8 @@ function PrivateChat({ user }: PrivateChatProps) {
             }
           />
           <Messanger
+            joinedUsersState={joinedUsersState}
+            messages={messagesState}
             onSubmit={sendMessage}
             channel={currentChannel}
             uploadFileProp={uploadImage}

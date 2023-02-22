@@ -17,79 +17,9 @@ export const fetchUsers = () =>
 
 export const getUserProfile = (uid: string) =>
   db.database().ref("users").child(uid).get();
-// db
-//   .firestore()
-//   .collection("profiles")
-//   .doc(uid)
-//   .get()
-//   .then((snapshot) => snapshot.data());
 
 export const login = async ({ email, password }: any) => {
   return db.auth().signInWithEmailAndPassword(email, password);
-  // const url = "/00010001";
-  // const data = {
-  //   params: {
-  //     deviceType: "web",
-  //     userId: userId,
-  //     userPassword: userPassword,
-  //   },
-  // };
-  // let myuuid = uuidv4();
-
-  // const resLogin: any = await axiosClient.post(url, JSON.stringify(data));
-
-  // setUser(resLogin);
-
-  // const dataFirebase = { ...resLogin };
-
-  // console.log({ resLogin });
-  // if (resLogin?.result === "user not found") {
-  //   dataFirebase.email = `${data.params.userId}@gmail.com`;
-  //   dataFirebase.password = `${data.params.userPassword}`;
-  // } else {
-  //   console.log("user ton tai");
-  //   dataFirebase.email = `${data.params.userId}@gmail.com`;
-  //   dataFirebase.password = `${data.params.userPassword}56`;
-
-  // const listUsers = await fetchUsers();
-
-  // const dupUser = listUsers.filter(
-  //   (user: any) => user.email === dataFirebase.email
-  // );
-
-  // console.log({ dupUser });
-  // const { user } = await firebase
-  //   .auth()
-  //   .createUserWithEmailAndPassword(
-  //     dataFirebase.email,
-  //     dataFirebase.password
-  //   );
-
-  // console.log({ user });
-
-  // const userProfileRegister: any = {
-  //   userId: data.params.userId || userId,
-  //   uid: user.uid || myuuid,
-  //   username: data.params.userId || userId,
-  //   email: dataFirebase.email,
-  //   avatar: resLogin?.params.profile_image || "",
-  //   atk: resLogin?.params.atk || myuuid,
-  //   rtk: resLogin?.params.rtk || myuuid,
-  //   joinedChannels: [],
-  // };
-
-  // await createUserProfile(userProfileRegister);
-  // await createUser(userProfileRegister);
-
-  // if (dupUser.length > 0) {
-  //   console.log("dupUser");
-  //   const loginFireBaseRes = await loginFirebase(dataFirebase);
-  //   return loginFireBaseRes;
-  // }
-
-  // const loginFireBaseRes = await loginFirebase(dataFirebase);
-  // return loginFireBaseRes;
-  // }
 };
 
 export const loginFirebase = async ({ email, password }: any) => {
@@ -127,6 +57,8 @@ export const createUser = (userProfileRegister: any, profile: any) => {
     displayName: profile.displayName,
     photoURL: profile.photoURL,
     uid: profile.uid,
+    id: profile.uid,
+    display: profile.username,
     username: profile?.username,
     userId: profile.userId,
     email: profile.email,

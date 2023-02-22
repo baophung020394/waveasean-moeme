@@ -20,23 +20,29 @@ import { v4 as uuidv4 } from "uuid";
 import { createTimestamp } from "utils/time";
 import { useSelector } from "react-redux";
 import { convertFiles } from "utils/handleFiles";
-
+import firebase from "db/firestore";
+import { MentionsInput, Mention } from "react-mentions";
+import MentionsInputStyle from "./MentionsInputStyle";
 interface MessangerProps {
+  joinedUsersState?: any;
   channel: any;
-  messages: any;
+  messages?: any;
   onSubmit: (message: any) => void;
   uploadFileProp?: (data: any) => void;
 }
 
 function Messanger({
+  joinedUsersState,
   onSubmit,
   channel,
   messages,
   uploadFileProp,
 }: MessangerProps) {
   const [value, setValue] = useState<any>("");
+  const [listUserJoined, setListUserJoined] = useState<any>([]);
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const textareaRef = useRef<any>(null);
+  const usersJoinedRef = useRef<any>(null);
   const user = JSON.parse(localStorage.getItem("_profile"));
   const userRedux = useSelector(({ auth }) => auth.user);
 
@@ -117,6 +123,8 @@ function Messanger({
    */
   const sendMessage = async () => {
     if (value.trim() === "") return;
+    console.log({ value });
+    console.log("value", value.match(/[^(]+(?=\))/g));
     const messages: any = {
       idMessage: myuuid,
       content: value.trim(),
@@ -125,36 +133,6 @@ function Messanger({
     };
     onSubmit(messages);
   };
-
-  const displayUserJoined = () => {
-    const usersJoined = messages?.reduce(
-      (acc: any, message: any, currentIdx: number) => {
-        // console.log("acc", acc);
-        // console.log("message", message);
-        console.log('curridx',currentIdx)
-        console.log(acc[currentIdx-1]);
-        console.log({ message });
-        console.log('Object.keys(cur.name)',Object.keys(message))
-        console.log('Object.value(cur.name)',Object.values(message))
-        // if (
-        //   !acc[currentIdx - 1]?.uid.includes(Object.values(message.user)[1])
-        // ) {
-        //   acc.push(message.user);
-        // }
-        // if (!acc.includes(Object.keys(message?.user))) {
-        //   acc.push(message?.user);
-        // }
-        return acc;
-        // return acc.includes(message?.user) ? acc : [...acc, message?.user];
-      },
-      []
-    );
-    // console.log({ usersJoined });
-    return usersJoined;
-  };
-  console.log(
-    displayUserJoined()
-  );
 
   /**
    * Capture
@@ -221,7 +199,7 @@ function Messanger({
 
   const dragLeaveHandler = (ev: any) => {
     console.log("File(s) in drop zone left");
-    textareaRef.current.style.border = "1px solid #e2e2e2";
+    // textareaRef.current.style.border = "1px solid #e2e2e2";
     // Prevent default behavior (Prevent file from being opened)
     ev.preventDefault();
   };
@@ -241,22 +219,30 @@ function Messanger({
         channel?.enableWriteMsg === "0" ? "enableWriteMsg" : ""
       } chat-input form-group mt-3 mb-0`}
     >
-      <textarea
+      <MentionsInput
         id="text-area"
-        ref={textareaRef}
-        onChange={(e) => setValue(e.target.value)}
+        inputRef={textareaRef}
         onKeyPress={onKeyPress}
         onDrop={dropHandler}
         onDragOver={dragOverHandler}
         onDragLeave={dragLeaveHandler}
         value={value}
-        className="form-control"
+        onChange={(e) => setValue(e.target.value)}
+        className="form-control mentions-input"
         placeholder={`${
           channel?.enableWriteMsg === "0"
             ? "Chat is disabled"
             : "Type your message here..."
         } `}
-      ></textarea>
+        style={MentionsInputStyle}
+      >
+        <Mention
+          data={joinedUsersState}
+          trigger="@"
+          markup="@__display__"
+          style={{ background: "#cee4e5" }}
+        />
+      </MentionsInput>
 
       <div className="chat-input__options">
         <div className="chat-input__options__left">
@@ -355,41 +341,70 @@ const MessangerStyled = styled.div`
       z-index: 99;
     }
 
-    textarea {
-      color: #ccc;
-      font-size: 14px;
-      position: relative;
-
-      &::placeholder {
+    .mentions-input {
+      .form-control__control {
         color: #ccc;
         font-size: 14px;
+        position: relative;
+
+        &::placeholder {
+          color: #ccc;
+          font-size: 14px;
+        }
       }
     }
   }
 
-  textarea {
-    border: none;
-    padding: 0;
-    resize: none;
-    padding: 16px;
-    border-bottom: 1px solid #e2e2e2;
-    overflow: auto;
-    border-radius: 0;
+  .mentions-input {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     max-height: 350px;
+    height: auto;
+    border: none;
+    border-bottom: 1px solid #e2e2e2;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    overflow: auto;
+    min-height: 60px;
+    overflow-y: hidden !important;
 
-    &::placeholder {
-      color: #e2e2e2;
+    .form-control__control {
+      min-height: unset;
+      .form-control__highlighter {
+        overflow-wrap: unset !important;
+        // overflow: unset !important;
+        word-break: break-word;
+        white-space: unset !important;
+        max-height: 350px;
+      }
     }
-
-    &:focus {
+    .form-control__input {
+      border: none;
+      padding: 0;
+      resize: none;
+      padding: 16px;
       border-bottom: 1px solid #e2e2e2;
-      box-shadow: none;
-    }
+      overflow-y: auto !important;
+      border-radius: 0;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      max-height: 350px;
+      padding: 16px;
+      border: none;
+      height: 100% !important;
 
-    &::-webkit-scrollbar {
-      display: none;
+      &::placeholder {
+        color: #e2e2e2;
+      }
+
+      &:focus {
+        border-bottom: 1px solid #e2e2e2;
+        box-shadow: none;
+      }
+
+      &::-webkit-scrollbar {
+        // display: none;
+      }
     }
   }
 

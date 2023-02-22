@@ -48,17 +48,12 @@ export const subscribeToProfile = (uid: string, onSubsribe: any) =>
     .doc(uid)
     .onSnapshot((snapshot) => onSubsribe(snapshot.data()));
 
-export const joinChannel = async (userId: string, channelId: string) => {
-  const userRef = db.firestore().doc(`profiles/${userId}`);
-  const channelRef = db.firestore().doc(`channels/${channelId}`);
+export const joinChannel = async (user: any, channelId: string) => {
+  // const userRef = db.database().ref(`users/${uid}`);
+  const channelRef = db.database().ref(`channels/${channelId}`);
 
-  await userRef.update({
-    joinedChannels: firebase.firestore.FieldValue.arrayUnion(channelRef),
-  });
-
-  await channelRef.update({
-    joinedUsers: firebase.firestore.FieldValue.arrayUnion(userRef),
-  });
+  // await userRef.child("joinedChannels").child(channelId).set(channelId);
+  await channelRef.child("joinedUsers").child(user.uid).set(user);
 };
 
 export const sendChannelMessage = (message: any, channelId: any) => {

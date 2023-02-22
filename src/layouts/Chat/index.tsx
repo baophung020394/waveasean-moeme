@@ -32,13 +32,13 @@ function Chat({}: ChatProps) {
   const [selectedFile, setSelectedFile] = useState<any>({});
   const joinedChannels = useSelector(({ channel }) => channel.joined);
   const userRedux = useSelector(({ auth }) => auth.user);
-
+  const userJoinedRef = firebase.database().ref("channels");
   const messageRef = firebase.database().ref("messages");
   const [messagesState, setMessagesState] = useState([]);
   const [searchTermState, setSearchTermState] = useState("");
+  const [joinedUsersState, setJoinedUsersState] = useState<any>([]);
   const currentChannel = useSelector(({ channel }) => channel?.currentChannel);
 
-  console.log({ userRedux });
   const sendMessage = useCallback(
     (message) => {
       dispatch(sendChannelMessage2(message, id));
@@ -148,9 +148,23 @@ function Chat({}: ChatProps) {
     return messages;
   };
 
-  if (!currentChannel?.id) {
-    return <LoadingView message="Loading Chat..." />;
-  }
+  useEffect(() => {
+    if (id) {
+      let list: any = [];
+      userJoinedRef
+        .child(id)
+        .child("joinedUsers")
+        .on("child_added", (snap) => {
+          console.log("snap.val()", snap.val());
+          list.push(snap.val());
+        });
+      setJoinedUsersState(list);
+    }
+  }, [id]);
+
+  // if (!currentChannel?.id) {
+  //   return <LoadingView message="Loading Chat..." />;
+  // }
 
   return (
     <ChatStyled className="chat--view">
@@ -178,6 +192,7 @@ function Chat({}: ChatProps) {
             )}
           </div>
           <Messanger
+            joinedUsersState={joinedUsersState}
             messages={messagesState}
             onSubmit={sendMessage}
             channel={currentChannel}

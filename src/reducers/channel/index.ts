@@ -8,11 +8,6 @@ interface initialState {
 }
 
 function createChannelReducer() {
-  // CHANNELS_MESSAGE_UPDATE_READ: (state: any, action) => {
-  // const { channel } = action;
-  // console.log("channel read", channel);
-  //   state[channel.id] = channel;
-  // },
   const joined = (state: any = [], action: any) => {
     switch (action.type) {
       case "CHANNELS_FETCH_RESTART":
@@ -20,8 +15,8 @@ function createChannelReducer() {
       case "CHANNELS_FETCH_SUCCESS":
         return action.joined;
 
-      case "CHANNELS_JOIN_SUCCESS":
-        return [...state, action.channel];
+      // case "CHANNELS_JOIN_SUCCESS":
+      //   return [...state, action.channel];
       default:
         return state;
     }
@@ -32,10 +27,10 @@ function createChannelReducer() {
         return [];
       case "CHANNELS_FETCH_SUCCESS":
         return action.available;
-      case "CHANNELS_JOIN_SUCCESS":
-        return state.filter(
-          (channel: any) => channel.id !== action?.channel?.id
-        );
+      // case "CHANNELS_JOIN_SUCCESS":
+      //   return state.filter(
+      //     (channel: any) => channel.id !== action?.channel?.id
+      //   );
       default:
         return state;
     }

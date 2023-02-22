@@ -46,7 +46,6 @@ function Register({}: RegisterProps) {
   };
 
   const obSubmit = (data: any) => {
-    console.log({ data });
     dispatch({
       type: "AUTH_REGISTER_INIT",
     });
@@ -60,10 +59,8 @@ function Register({}: RegisterProps) {
       .catch((serverError) => {
         console.log("error", serverError);
       });
-    // dispatch(registerUser(data));
   };
 
-  console.log({ isChecking });
   if (isChecking) {
     return <LoadingView />;
   }
