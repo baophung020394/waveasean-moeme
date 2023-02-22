@@ -13,7 +13,7 @@ import SettingsView from "layouts/Settings";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Redirect,
   Route,
   Switch,
@@ -22,7 +22,8 @@ import StoreProvider from "store/StoreProvider";
 import styled from "styled-components";
 import Header from "./components/common/Header";
 import PushNotification from "components/PushNotification";
-import { onMessageListener } from "db/firestore";
+import firebase, { messaging } from "db/firestore";
+import { getToken } from "firebase/messaging";
 
 export const AuthRoute = ({ children, ...rest }: any) => {
   const user = useSelector(({ auth }) => auth.user);
@@ -60,17 +61,25 @@ function MoeMe() {
   const isChecking = useSelector(({ auth }) => auth.isChecking);
   const [show, setShow] = useState(false);
   const [notification, setNotification] = useState({ title: "", body: "" });
-  onMessageListener()
-    .then((payload: any) => {
-      console.log({ payload });
-      setShow(true);
-      setNotification({
-        title: payload.notification.title,
-        body: payload.notification.body,
+
+  async function requestPermission() {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      // Generate Token
+      const token = await getToken(messaging, {
+        vapidKey:
+          "BHQ0O7j9_SRP-uAwDv6p1_B0o-Thwt5SMhMD74sAbbVsfYmeCFZNzfhV6GikSsXhDacUz7arpskzaAqNRteoyJM",
       });
-      console.log(payload);
-    })
-    .catch((err:any) => console.log("failed: ", err));
+      console.log("Token Gen", token);
+      // Send this token  to server ( db)
+    } else if (permission === "denied") {
+      alert("You denied for the notification");
+    }
+  }
+  useEffect(() => {
+    // Req user for notification permission
+    requestPermission();
+  }, []);
 
   useEffect(() => {
     const unsubFromAuth = dispatch(listenToAuthChanges());
@@ -95,7 +104,7 @@ function MoeMe() {
   return (
     <Router>
       <Header />
-      <PushNotification />
+      {/* <PushNotification /> */}
       <ContentWrapper>
         <Switch>
           <Route path="/login">
