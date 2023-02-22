@@ -30,21 +30,15 @@ function Chat({}: ChatProps) {
   const dispatch: any = useDispatch();
   const [progressBar, setProgressBar] = useState<any>({});
   const [selectedFile, setSelectedFile] = useState<any>({});
-  // const peopleWatchers: any = useRef({});
-  // const activeChannel = useSelector(
-  //   ({ channel }) => channel.activeChannels[id]
-  // );
   const joinedChannels = useSelector(({ channel }) => channel.joined);
   const userRedux = useSelector(({ auth }) => auth.user);
-  // const messages = useSelector(({ channel }) => channel.messages[id]);
-  // const messageSubs = useSelector(({ channel }) => channel.messageSubs[id]);
-  // const joinedUsers = activeChannel?.joinedUsers;
 
   const messageRef = firebase.database().ref("messages");
   const [messagesState, setMessagesState] = useState([]);
   const [searchTermState, setSearchTermState] = useState("");
   const currentChannel = useSelector(({ channel }) => channel?.currentChannel);
 
+  console.log({ userRedux });
   const sendMessage = useCallback(
     (message) => {
       dispatch(sendChannelMessage2(message, id));
@@ -52,6 +46,10 @@ function Chat({}: ChatProps) {
     [id]
   );
 
+  /**
+   * Check status and edit progress bar upload
+   * @param statusProgress
+   */
   const perCentUploadSuccess = (statusProgress: any) => {
     if (
       statusProgress?.percent <= 100 &&
@@ -74,8 +72,10 @@ function Chat({}: ChatProps) {
     }
   };
 
-  // console.log({ messagesState });
-
+  /**
+   * Upload image
+   * @param data
+   */
   const uploadImage = (data: any) => {
     // console.log("uploadImage", data);
     const newData = { ...data };
@@ -105,6 +105,10 @@ function Chat({}: ChatProps) {
     }
   }, [id]);
 
+  /**
+   * Count user joined channel
+   * @returns
+   */
   const uniqueuUsersCount = () => {
     const uniqueuUsers = messagesState?.reduce((acc, message) => {
       if (!acc.includes(message?.author?.username)) {
@@ -144,9 +148,9 @@ function Chat({}: ChatProps) {
     return messages;
   };
 
-  // if (!activeChannel?.id) {
-  //   return <LoadingView message="Loading Chat..." />;
-  // }
+  if (!currentChannel?.id) {
+    return <LoadingView message="Loading Chat..." />;
+  }
 
   return (
     <ChatStyled className="chat--view">
@@ -174,6 +178,7 @@ function Chat({}: ChatProps) {
             )}
           </div>
           <Messanger
+            messages={messagesState}
             onSubmit={sendMessage}
             channel={currentChannel}
             uploadFileProp={uploadImage}

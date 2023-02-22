@@ -129,12 +129,7 @@ function CardChannelList({
               {renderChannelType(channel?.chnl_type)}
             </div>
           </div>
-          {/* {getNotificationCount(channel) && (
-            <div className="card--top__notify">
-              <p>New - {getNotificationCount(channel)}</p>
-            </div>
-          )} */}
-
+          
           <Notification
             userProps={user}
             channel={currentChannel}
@@ -252,7 +247,7 @@ const CardChannelStyled = styled.div`
       &__person {
         display: flex;
         align-items: center;
-        
+
         img {
           width: 24px;
           height: 24px;

@@ -45,6 +45,10 @@ function ChatMessageList({
     messagesRef.scrollIntoView();
   };
 
+  /**
+   * Handle drop files
+   * @param ev
+   */
   const dropHandler = (ev: any) => {
     console.log("File(s) dropped");
 
@@ -82,6 +86,10 @@ function ChatMessageList({
     }
   };
 
+  /**
+   * Handle when hover element drop files
+   * @param ev
+   */
   const dragOverHandler = (ev: any) => {
     console.log("File(s) in drop zone");
     boxMessagesRef.current.style.border = "3px solid rgb(29 78 216)";
@@ -89,8 +97,11 @@ function ChatMessageList({
     ev.preventDefault();
   };
 
+  /**
+   * Handle when leave drag element
+   * @param ev
+   */
   const dragLeaveHandler = (ev: any) => {
-    console.log("File(s) in drop zone left");
     boxMessagesRef.current.style.border = "unset";
     ev.preventDefault();
   };

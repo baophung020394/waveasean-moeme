@@ -23,11 +23,17 @@ import { convertFiles } from "utils/handleFiles";
 
 interface MessangerProps {
   channel: any;
+  messages: any;
   onSubmit: (message: any) => void;
   uploadFileProp?: (data: any) => void;
 }
 
-function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
+function Messanger({
+  onSubmit,
+  channel,
+  messages,
+  uploadFileProp,
+}: MessangerProps) {
   const [value, setValue] = useState<any>("");
   const [isOpenEmoj, setIsOpenEmoj] = useState<boolean>(false);
   const textareaRef = useRef<any>(null);
@@ -119,6 +125,36 @@ function Messanger({ onSubmit, channel, uploadFileProp }: MessangerProps) {
     };
     onSubmit(messages);
   };
+
+  const displayUserJoined = () => {
+    const usersJoined = messages?.reduce(
+      (acc: any, message: any, currentIdx: number) => {
+        // console.log("acc", acc);
+        // console.log("message", message);
+        console.log('curridx',currentIdx)
+        console.log(acc[currentIdx-1]);
+        console.log({ message });
+        console.log('Object.keys(cur.name)',Object.keys(message))
+        console.log('Object.value(cur.name)',Object.values(message))
+        // if (
+        //   !acc[currentIdx - 1]?.uid.includes(Object.values(message.user)[1])
+        // ) {
+        //   acc.push(message.user);
+        // }
+        // if (!acc.includes(Object.keys(message?.user))) {
+        //   acc.push(message?.user);
+        // }
+        return acc;
+        // return acc.includes(message?.user) ? acc : [...acc, message?.user];
+      },
+      []
+    );
+    // console.log({ usersJoined });
+    return usersJoined;
+  };
+  console.log(
+    displayUserJoined()
+  );
 
   /**
    * Capture

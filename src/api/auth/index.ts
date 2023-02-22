@@ -16,12 +16,13 @@ export const fetchUsers = () =>
   db.firestore().collection("profiles").get().then(extractSnapshotData);
 
 export const getUserProfile = (uid: string) =>
-  db
-    .firestore()
-    .collection("profiles")
-    .doc(uid)
-    .get()
-    .then((snapshot) => snapshot.data());
+  db.database().ref("users").child(uid).get();
+// db
+//   .firestore()
+//   .collection("profiles")
+//   .doc(uid)
+//   .get()
+//   .then((snapshot) => snapshot.data());
 
 export const login = async ({ email, password }: any) => {
   return db.auth().signInWithEmailAndPassword(email, password);

@@ -1,4 +1,3 @@
-import { getUserProfile } from "api/auth";
 import * as api from "api/channel";
 import db from "db/firestore";
 
@@ -279,9 +278,7 @@ export const createChannel2 =
       cloneChannel.owner_name = cloneChannel?.room_name;
     }
     const { user } = getState().auth;
-    cloneChannel.createdBy = {
-      name: user?.userId || user?.uid,
-    };
+    cloneChannel.createdBy = user;
 
     return api
       .createChannel2(cloneChannel, user)

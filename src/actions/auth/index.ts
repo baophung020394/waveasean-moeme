@@ -74,10 +74,12 @@ export const listenToAuthChanges = () => (dispatch: any) => {
 
     if (authUser) {
       const userProfile = await api.getUserProfile(authUser.uid);
-      console.log({ userProfile });
+      // userProfile.val();
+      // console.log("authUser", authUser);
+      // console.log(userProfile.val());
       dispatch({
         type: "AUTH_ON_SUCCESS",
-        user: userProfile === undefined ? authUser : userProfile,
+        user: userProfile.val() === undefined ? authUser : userProfile.val(),
       });
       console.log(`we are authenticated`);
     } else {
