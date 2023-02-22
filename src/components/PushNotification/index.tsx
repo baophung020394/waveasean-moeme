@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 function PushNotification() {
+  console.log("notification");
   const [notification, setNotification] = useState({ title: "", body: "" });
   const notify = () => toast(<ToastDisplay />);
   function ToastDisplay() {
