@@ -11,6 +11,12 @@ const createLoginReducer = () =>
     error: createErrorReducer("AUTH_LOGIN"),
   });
 
+const createRegisterReducer = () =>
+  combineReducers({
+    isChecking: createIsFetchingReducer("AUTH_REGISTER"),
+    error: createErrorReducer("AUTH_REGISTER"),
+  });
+
 function createAuthReducer() {
   const user = (state: any = null, action: any) => {
     switch (action.type) {
@@ -43,6 +49,7 @@ function createAuthReducer() {
     logout,
     isChecking: createIsFetchingReducer("AUTH_ON"),
     login: createLoginReducer(),
+    register: createRegisterReducer(),
     // logout: logoutReducer("AUTH_LOGOUT"),
     // register: createRegisterReducer(),
   });

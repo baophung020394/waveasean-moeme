@@ -117,48 +117,6 @@ export const onAuthStateChanges = (onAuth: any) => {
   return firebase.auth().onAuthStateChanged(onAuth);
 };
 
-export const register = async ({ userId, userPassword }: Auth) => {
-  let myuuid = uuidv4();
-
-  const dataFirebase = {
-    email: "",
-    password: "",
-  };
-  dataFirebase.email = `${userId}@gmail.com`;
-  dataFirebase.password = `${userPassword}`;
-
-  // const listUsers = await fetchUsers();
-
-  // const dupUser = listUsers.filter(
-  //   (user: any) => user.email === dataFirebase.email
-  // );
-
-  // if (dupUser.length > 0) {
-  //   const loginFireBaseRes = await loginFirebase(dataFirebase);
-  //   return loginFireBaseRes;
-  // }
-
-  const { user } = await firebase
-    .auth()
-    .createUserWithEmailAndPassword(dataFirebase.email, dataFirebase.password);
-
-  const userProfileRegister: any = {
-    userId: userId,
-    uid: user.uid,
-    username: userId,
-    email: dataFirebase.email,
-    avatar: "",
-    atk: myuuid,
-    rtk: myuuid,
-    joinedChannels: [],
-  };
-  await createUserProfile(userProfileRegister);
-
-  // await createUser(userProfileRegister);
-  const loginFireBaseRes = await loginFirebase(dataFirebase);
-  return loginFireBaseRes;
-};
-
 /** Test auth 2 */
 export const createUser = (userProfileRegister: any, profile: any) => {
   console.log({ userProfileRegister });

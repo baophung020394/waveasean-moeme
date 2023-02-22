@@ -28,14 +28,14 @@ export const login = (formData: Auth) => (dispatch: any) => {
 
 export const registerUser =
   (formData: any, profile: any) => (dispatch: any) => {
-    console.log({ formData });
-    dispatch({
-      type: "AUTH_REGISTER_INIT",
-    });
     return api
       .createUser(formData, profile)
       .then(() => {
         console.log("user register success");
+        return dispatch({
+          type: "AUTH_REGISTER_SUCCESS",
+          user: profile,
+        });
       })
       .catch((error) => {
         console.log("error", error);

@@ -10,14 +10,13 @@ import { Link, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 
-
 interface RegisterProps {}
 
 function Register({}: RegisterProps) {
   const dispatch: any = useDispatch();
   const { register, handleSubmit, getFieldState, getValues } = useForm();
   const error = useSelector(({ auth }) => auth.login.error);
-  const isChecking = useSelector(({ auth }) => auth.login.isChecking);
+  const isChecking = useSelector(({ auth }) => auth.register.isChecking);
   const user = useSelector(({ auth }) => auth.user);
   let myuuid = uuidv4();
   const updateuserDetails = (createdUser: any) => {
@@ -48,6 +47,9 @@ function Register({}: RegisterProps) {
 
   const obSubmit = (data: any) => {
     console.log({ data });
+    dispatch({
+      type: "AUTH_REGISTER_INIT",
+    });
     firebase
       .auth()
       .createUserWithEmailAndPassword(data.email, data.password)
@@ -61,6 +63,7 @@ function Register({}: RegisterProps) {
     // dispatch(registerUser(data));
   };
 
+  console.log({ isChecking });
   if (isChecking) {
     return <LoadingView />;
   }
