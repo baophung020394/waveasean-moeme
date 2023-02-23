@@ -1,1 +1,1 @@
-console.log("Chim bé huy thơm lắm nha ");
+console.log("Custom script");
