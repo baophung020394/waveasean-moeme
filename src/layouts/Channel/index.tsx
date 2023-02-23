@@ -9,30 +9,11 @@ import styled from "styled-components";
 interface ChannelProps {}
 
 function Channel() {
-  const user = useSelector(({ auth }) => auth.user);
-  const joinedChannels = useSelector(({ channel }) => channel.joined);
-  const availableChannels = useSelector(({ channel }) => channel.available);
-  const channels = useSelector(({ channel }) => channel.channel);
-  const dispatch: any = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchChannels());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(getChannelList(user.userId));
-  }, [dispatch]);
-
   return (
     <ChannelStyled className="channel-container">
       <div className="channel-container__list">
-        <ChannelList joinedChannels={joinedChannels} />
+        <ChannelList />
       </div>
-      <NewChannels
-        availableChannels={availableChannels}
-        joinedChannels={joinedChannels}
-        channels={channels?.length > 0 && channels}
-      />
     </ChannelStyled>
   );
 }

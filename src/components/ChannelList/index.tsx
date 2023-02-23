@@ -22,11 +22,9 @@ import firebase from "firebase/compat/app";
 import "firebase/database";
 import { Notification } from "components/Notifications";
 
-interface ChannelListProps {
-  joinedChannels: any;
-}
+interface ChannelListProps {}
 
-function ChannelList({ joinedChannels }: ChannelListProps) {
+function ChannelList({}: ChannelListProps) {
   const [channel, setChannel] = useState(null);
   const [firstLoad, setFirstLoad] = useState(true);
   const dispatch: any = useDispatch();

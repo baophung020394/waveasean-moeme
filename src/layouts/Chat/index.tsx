@@ -169,7 +169,7 @@ function Chat({}: ChatProps) {
   return (
     <ChatStyled className="chat--view">
       <div className="chat--view__channels">
-        <ChannelList joinedChannels={joinedChannels} />
+        <ChannelList />
       </div>
       <div className="chat--view__content">
         <ChatBar

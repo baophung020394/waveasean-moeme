@@ -1,14 +1,16 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { BaseHrefWebpackPlugin } = require("base-href-webpack-plugin");
 
 module.exports = {
   entry: {
     main: "./src/index.tsx",
-    firebasesw: "./public/firebase-messaging-sw.js",
   },
 
   output: {
-    path: path.resolve(__dirname, "../public"),
+    path: path.resolve(__dirname, "dist"),
+    filename: "main.js",
+    publicPath: "/",
   },
 
   resolve: {
@@ -38,7 +40,6 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx|ts|tsx)$/,
-        exclude: /node_modules/,
         use: [
           {
             loader: "babel-loader",
@@ -82,9 +83,10 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "../public", "index.html"),
-      filename: "./index.html",
+      template: path.resolve(__dirname, "../public/index.html"),
+      filename: "index.html",
     }),
+    new BaseHrefWebpackPlugin({ baseHref: "/" }),
   ],
 
   optimization: {

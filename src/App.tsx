@@ -22,9 +22,8 @@ import StoreProvider from "store/StoreProvider";
 import styled from "styled-components";
 import Header from "./components/common/Header";
 import PushNotification from "components/PushNotification";
-import { getToken } from "firebase/messaging";
 
-export const AuthRoute = ({ children, ...rest }: any) => {
+export const AuthRoute = (children: any , { ...rest }) => {
   const user = useSelector(({ auth }) => auth.user);
   const onlyChild = React.Children.only(children);
 
