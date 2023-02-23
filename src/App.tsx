@@ -23,7 +23,7 @@ import styled from "styled-components";
 import Header from "./components/common/Header";
 import PushNotification from "components/PushNotification";
 
-export const AuthRoute = (children: any , { ...rest }) => {
+export const AuthRoute = ({ children, ...rest }: any) => {
   const user = useSelector(({ auth }) => auth.user);
   const onlyChild = React.Children.only(children);
 
