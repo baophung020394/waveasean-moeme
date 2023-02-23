@@ -16,9 +16,11 @@ module.exports = merge(config, {
       "process.env.NODE_ENV": JSON.stringify("development"),
     }),
   ],
+  
   devServer: {
     historyApiFallback: true,
     contentBase: path.join(__dirname, "dist"),
+    contentBasePublicPath: "/public",
     compress: true,
     port: 3000,
     watchOptions: {

@@ -148,19 +148,19 @@ function Chat({}: ChatProps) {
     return messages;
   };
 
-  useEffect(() => {
-    if (id) {
-      let list: any = [];
-      userJoinedRef
-        .child(id)
-        .child("joinedUsers")
-        .on("child_added", (snap) => {
-          console.log("snap.val()", snap.val());
-          list.push(snap.val());
-        });
-      setJoinedUsersState(list);
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     let list: any = [];
+  //     userJoinedRef
+  //       .child(id)
+  //       .child("joinedUsers")
+  //       .on("child_added", (snap) => {
+  //         console.log("snap.val()", snap.val());
+  //         list.push(snap.val());
+  //       });
+  //     setJoinedUsersState(list);
+  //   }
+  // }, [id]);
 
   // if (!currentChannel?.id) {
   //   return <LoadingView message="Loading Chat..." />;

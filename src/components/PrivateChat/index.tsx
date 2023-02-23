@@ -111,23 +111,23 @@ function PrivateChat({ user }: PrivateChatProps) {
     }
   };
 
-  useEffect(() => {
-    if (user?.id) {
-      let list: any = [];
-      userJoinedRef
-        .child(user?.id)
-        .child("joinedUsers")
-        .on("child_added", (snap) => {
-          console.log("snap.val()", snap.val());
-          list.push(snap.val());
-        });
-      setJoinedUsersState(list);
-    }
-  }, [user?.id]);
+  // useEffect(() => {
+  //   if (user?.id) {
+  //     let list: any = [];
+  //     userJoinedRef
+  //       .child(user?.id)
+  //       .child("joinedUsers")
+  //       .on("child_added", (snap) => {
+  //         console.log("snap.val()", snap.val());
+  //         list.push(snap.val());
+  //       });
+  //     setJoinedUsersState(list);
+  //   }
+  // }, [user?.id]);
 
-  if (!currentChannel?.id) {
-    return <LoadingView message="Loading Chat..." />;
-  }
+  // if (!currentChannel?.id) {
+  //   return <LoadingView message="Loading Chat..." />;
+  // }
 
   return (
     <ChatStyled className="chat--view">

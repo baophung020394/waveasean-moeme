@@ -41,14 +41,14 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
 
   const [channelsState, setChannelsState] = useState([]);
 
-  const setFirstChannel = () => {
-    const firstChannel = joinedChannels[0];
-    if (firstLoad && joinedChannels.length > 0) {
-      setChannel(firstChannel);
-      dispatch(setCurrentChannel(firstChannel));
-    }
-    setFirstLoad(false);
-  };
+  // const setFirstChannel = () => {
+  //   const firstChannel = joinedChannels[0];
+  //   if (firstLoad && joinedChannels.length > 0) {
+  //     setChannel(firstChannel);
+  //     dispatch(setCurrentChannel(firstChannel));
+  //   }
+  //   setFirstLoad(false);
+  // };
 
   const channelsRef = firebase.database().ref("channels");
 
@@ -64,6 +64,7 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
     return () => channelsRef.off();
   }, []);
 
+  console.log({ channelsState });
   useEffect(() => {
     if (channelsState.length > 0) {
       dispatch(setCurrentChannel(channelsState[0]));
@@ -100,15 +101,17 @@ function ChannelList({ joinedChannels }: ChannelListProps) {
       <Title name="Channels joined" />
       <div className="card--container">
         {channelsState?.length > 0 &&
-          channelsState?.map((channel: Channel, index: number) => {
-            return (
-              <CardChannelList
-                channel={channel}
-                key={`${channel?.room_name}-${index}`}
-                setChannel={setChannel}
-              />
-            );
-          })}
+          channelsState
+            ?.filter((cn: any) => cn?.room_name || cn?.id !== undefined)
+            .map((channel: Channel, index: number) => {
+              return (
+                <CardChannelList
+                  channel={channel}
+                  key={`${channel?.room_name}-${index}`}
+                  setChannel={setChannel}
+                />
+              );
+            })}
       </div>
     </ChannelListStyled>
   );

@@ -5,6 +5,11 @@ module.exports = {
   entry: {
     main: "./src/index.tsx",
   },
+  
+  output: {
+    filename: "customScript.js",
+    path: path.resolve(__dirname, "../public"),
+  },
 
   resolve: {
     alias: {
@@ -72,12 +77,19 @@ module.exports = {
         test: /\.s[ac]ss$/i,
         use: ["style-loader", "css-loader", "sass-loader"],
       },
+      {
+        test: /\.txt/,
+        type: "asset",
+      },
+      // {
+      //   loader: path.join(__dirname, "../public", "firebase-messaging-sw.js"),
+      // },
     ],
   },
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./public/index.html",
+      template: path.resolve(__dirname, "../public", "index.html"),
       filename: "./index.html",
     }),
   ],

@@ -18,6 +18,10 @@ const firebaseConfig = {
 // export const database = firebase;
 export const { Timestamp } = firebase.firestore;
 export default firebase.initializeApp(firebaseConfig);
+
+// navigator.serviceWorker.register(
+//   "/public/firebase-messaging-sw.js"
+// );
 const messaging = getMessaging();
 
 export const requestForToken = () => {
