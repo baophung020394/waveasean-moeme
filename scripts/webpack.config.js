@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   entry: {
     main: "./src/index.tsx",
+    firebasesw: "./public/firebase-messaging-sw.js",
   },
 
   output: {
