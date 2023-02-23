@@ -5,9 +5,8 @@ module.exports = {
   entry: {
     main: "./src/index.tsx",
   },
-  
+
   output: {
-    filename: "customScript.js",
     path: path.resolve(__dirname, "../public"),
   },
 
@@ -78,12 +77,9 @@ module.exports = {
         use: ["style-loader", "css-loader", "sass-loader"],
       },
       {
-        test: /\.txt/,
-        type: "asset",
+        loader: "file-loader",
+        filename: path.join(__dirname, "../public", "customScript.js")
       },
-      // {
-      //   loader: path.join(__dirname, "../public", "firebase-messaging-sw.js"),
-      // },
     ],
   },
 
