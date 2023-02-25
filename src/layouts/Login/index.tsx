@@ -34,7 +34,11 @@ function Login({}: LoginProps) {
   return (
     <LoginStyled className="login-view">
       <div className="login--box">
-        <form onSubmit={handleSubmit(obSubmit)} className="login--box__form">
+        <a href="https://baophung020394.github.io/waveasean-moeme-2/#/login" target="_blank">
+          React source is upgraded to newest version 18. 
+          Please click this link to go to new source
+        </a>
+        {/* <form onSubmit={handleSubmit(obSubmit)} className="login--box__form">
           <h1>Login</h1>
           <div className="form--inputs">
             <div className="form--inputs__input userid">
@@ -53,11 +57,6 @@ function Login({}: LoginProps) {
             </div>
           </div>
 
-          {/* {user !== null && user?.result !== "success" && (
-            <div className="alert alert-danger small" style={{ marginTop: 48 }}>
-              {user?.result}
-            </div>
-          )} */}
           {error && (
             <div className="alert alert-danger small">{error.message}</div>
           )}
@@ -85,7 +84,7 @@ function Login({}: LoginProps) {
             Copyright @ AVE APP.ALL RIGHTS RESERVED.TERMS OF SERVICE PRIVACY
             POLICY
           </span>
-        </div>
+        </div> */}
       </div>
     </LoginStyled>
   );

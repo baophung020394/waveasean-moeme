@@ -6,6 +6,7 @@ module.exports = {
   entry: {
     main: "./src/index.tsx",
   },
+  mode: "development",
 
   // output: {
   //   path: __dirname + "../public",

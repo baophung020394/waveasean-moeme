@@ -57,27 +57,6 @@ function MoeMe() {
   const dispatch: any = useDispatch();
   const isOnline = useSelector(({ app }) => app.isOnline);
   const isChecking = useSelector(({ auth }) => auth.isChecking);
-  const [show, setShow] = useState(false);
-  const [notification, setNotification] = useState({ title: "", body: "" });
-
-  // async function requestPermission() {
-  //   const permission = await Notification.requestPermission();
-  //   if (permission === "granted") {
-  //     // Generate Token
-  //     const token = await getToken(messaging, {
-  //       vapidKey:
-  //         "BHQ0O7j9_SRP-uAwDv6p1_B0o-Thwt5SMhMD74sAbbVsfYmeCFZNzfhV6GikSsXhDacUz7arpskzaAqNRteoyJM",
-  //     });
-  //     console.log("Token Gen", token);
-  //     // Send this token  to server ( db)
-  //   } else if (permission === "denied") {
-  //     alert("You denied for the notification");
-  //   }
-  // }
-  // useEffect(() => {
-  //   // Req user for notification permission
-  //   requestPermission();
-  // }, []);
 
   useEffect(() => {
     const unsubFromAuth = dispatch(listenToAuthChanges());
@@ -102,13 +81,12 @@ function MoeMe() {
   return (
     <Router>
       <Header />
-      <PushNotification />
       <ContentWrapper>
         <Switch>
           <Route path="/login">
             <LoginView />
           </Route>
-          <Route path="/register">
+          {/* <Route path="/register">
             <RegisterView />
           </Route>
           <AuthRoute path="/home">
@@ -131,7 +109,7 @@ function MoeMe() {
           </AuthRoute>
           <AuthRoute path="/settings">
             <SettingsView />
-          </AuthRoute>
+          </AuthRoute> */}
           <Redirect path="*" to="/login" />
         </Switch>
       </ContentWrapper>
